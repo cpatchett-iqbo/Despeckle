@@ -362,11 +362,13 @@ namespace IMAGE_FILTERS
             Min = 255;
             ArrayLength = 0;
             Z = ImageMatrix[y, x];
+            var imageWidth = GetWidth(ImageMatrix);
+            var imageHeight = GetHeight(ImageMatrix);
             for (int i = 0; i < Wmax * Wmax; i++)
             {
                 NewY = y + Dy[i];
                 NewX = x + Dx[i];
-                if (NewX >= 0 && NewX < GetWidth(ImageMatrix) && NewY >= 0 && NewY < GetHeight(ImageMatrix))
+                if (NewX >= 0 && NewX < imageWidth && NewY >= 0 && NewY < imageHeight)
                 {
                     Array[ArrayLength] = ImageMatrix[NewY, NewX];
                     if (Array[ArrayLength] > Max)
@@ -399,9 +401,10 @@ namespace IMAGE_FILTERS
             int[] Dx = new int[W * W];
             int[] Dy = new int[W * W];
             int Index = 0;
-            for (int _y = -(W / 2); _y <= (W / 2); _y++)
+            var wHalf = W / 2;
+            for (int _y = -wHalf; _y <= wHalf ; _y++)
             {
-                for (int _x = -(W / 2); _x <= (W / 2); _x++)
+                for (int _x = -wHalf; _x <= wHalf; _x++)
                 {
                     Dx[Index] = _x;
                     Dy[Index] = _y;
@@ -414,11 +417,13 @@ namespace IMAGE_FILTERS
             Min = 255;
             ArrayLength = 0;
             Z = ImageMatrix[y, x];
+            var imageHeight = GetHeight(ImageMatrix);
+            var imageWidth = GetWidth(ImageMatrix);
             for (int i = 0; i < W * W; i++)
             {
                 NewY = y + Dy[i];
                 NewX = x + Dx[i];
-                if (NewX >= 0 && NewX < GetWidth(ImageMatrix) && NewY >= 0 && NewY < GetHeight(ImageMatrix))
+                if (NewX >= 0 && NewX < imageWidth && NewY >= 0 && NewY < imageHeight)
                 {
                     Array[ArrayLength] = ImageMatrix[NewY, NewX];
                     if (Array[ArrayLength] > Max)
@@ -465,9 +470,11 @@ namespace IMAGE_FILTERS
         public static byte[,] ImageFilter(byte[,] ImageMatrix, int Max_Size, int Sort, int filter)
         {
             byte[,] ImageMatrix2 = ImageMatrix;
-            for (int y = 0; y < GetHeight(ImageMatrix); y++)
+            var imageHeight = GetHeight(ImageMatrix);
+            var imageWidth = GetWidth(ImageMatrix);
+            for (int y = 0; y < imageHeight; y++)
             {
-                for (int x = 0; x < GetWidth(ImageMatrix); x++)
+                for (int x = 0; x < imageWidth; x++)
                 {
                     if (filter == 1)
                         ImageMatrix2[y, x] = Filter1(ImageMatrix, x, y, Max_Size, Sort);
