@@ -1,6 +1,6 @@
 ﻿namespace IMAGE_FILTERS
 {
-    partial class Form1
+    partial class DemoForm
     {
         /// <summary>
         /// Required designer variable.
