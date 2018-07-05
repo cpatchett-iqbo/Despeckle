@@ -1,489 +1,584 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Drawing.Imaging;
-
-namespace IMAGE_FILTERS
+﻿namespace IQBackOffice.Despeckle
 {
+    using System.Drawing;
+    using System.Drawing.Imaging;
+    using System.Windows.Forms;
+
     public class ImageOperations
     {
         /// <summary>
         /// Open an image, convert it to gray scale and load it into 2D array of size (Height x Width)
         /// </summary>
-        /// <param name="ImagePath">Image file path</param>
+        /// <param name="imagePath">Image file path</param>
         /// <returns>2D array of gray values</returns>
-        public static byte[,] OpenImage(string ImagePath)
+        public static byte[,] OpenImage(string imagePath)
         {
-            Bitmap original_bm = new Bitmap(ImagePath);
-            int Height = original_bm.Height;
-            int Width = original_bm.Width;
+            var originalImage = new Bitmap(imagePath);
+            var height = originalImage.Height;
+            var width = originalImage.Width;
 
-            byte[,] Buffer = new byte[Height, Width];
+            var buffer = new byte[height, width];
 
             unsafe
             {
-                BitmapData bmd = original_bm.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, original_bm.PixelFormat);
+                var bitmapData = originalImage.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, originalImage.PixelFormat);
                 int x, y;
-                int nWidth = 0;
-                bool Format32 = false;
-                bool Format24 = false;
-                bool Format8 = false;
+                int byteWidth;
+                var bitsPerPixel = 0;
 
-                if (original_bm.PixelFormat == PixelFormat.Format24bppRgb)
+                switch (originalImage.PixelFormat)
                 {
-                    Format24 = true;
-                    nWidth = Width * 3;
+                    case PixelFormat.Format24bppRgb:
+
+                        bitsPerPixel = 24;
+                        byteWidth = width * 3;
+                        break;
+
+                    case PixelFormat.Format32bppArgb:
+                    case PixelFormat.Format32bppRgb:
+                    case PixelFormat.Format32bppPArgb:
+
+                        bitsPerPixel = 32;
+                        byteWidth = width * 4;
+                        break;
+
+                    case PixelFormat.Format8bppIndexed:
+
+                        bitsPerPixel = 8;
+                        byteWidth = width;
+                        break;
+
+                    case PixelFormat.Format1bppIndexed:
+
+                        bitsPerPixel = 1;
+                        byteWidth = width / 8;
+                        byteWidth += width % 8 == 0 ? 0 : 1;
+                        break;
+
+                    default:
+
+                        // TODO: Throw up error dialog.
+                        return null;
+
                 }
-                else if (original_bm.PixelFormat == PixelFormat.Format32bppArgb || original_bm.PixelFormat == PixelFormat.Format32bppRgb || original_bm.PixelFormat == PixelFormat.Format32bppPArgb)
+
+                var strideOffset = bitmapData.Stride - byteWidth;
+                var pixelPtr = (byte*)bitmapData.Scan0;
+                if (pixelPtr == null)
+                    return null;
+
+                for (y = 0; y < height; y++)
                 {
-                    Format32 = true;
-                    nWidth = Width * 4;
-                }
-                else if (original_bm.PixelFormat == PixelFormat.Format8bppIndexed)
-                {
-                    Format8 = true;
-                    nWidth = Width;
-                }
-                int nOffset = bmd.Stride - nWidth;
-                byte* p = (byte*)bmd.Scan0;
-                for (y = 0; y < Height; y++)
-                {
-                    for (x = 0; x < Width; x++)
+                    byte bitMask = 128;
+                    for (x = 0; x < width; x++)
                     {
-                        if (Format8)
+                        if (bitsPerPixel == 1)
                         {
-                            Buffer[y, x] = p[0];
-                            p++;
+                            // More complicated than the others
+                            buffer[y, x] = (pixelPtr[0] & bitMask) == 0 ? (byte)0 : (byte)255;
+
+                            bitMask >>= 1;
+                            if (bitMask == 0)
+                            {
+                                bitMask = 128;
+                                pixelPtr++;
+                            }
+
+                            continue;
                         }
-                        else
-                        {
-                            Buffer[y, x] = (byte)((int)(p[0] + p[1] + p[2]) / 3);
-                            if (Format24) p += 3;
-                            else if (Format32) p += 4;
-                        }
+
+                        buffer[y, x] = bitsPerPixel == 8 ? pixelPtr[0] : (byte)((pixelPtr[0] + pixelPtr[1] + pixelPtr[2]) / 3);
+                        pixelPtr += bitsPerPixel == 8 ? 1 : (bitsPerPixel == 24 ? 3 : 4);
                     }
-                    p += nOffset;
+
+                    if (bitsPerPixel == 1 && bitMask != 128)
+                        pixelPtr++;
+
+                    pixelPtr += strideOffset;
                 }
-                original_bm.UnlockBits(bmd);
+
+                originalImage.UnlockBits(bitmapData);
             }
 
-            return Buffer;
+            return buffer;
         }
 
         /// <summary>
         /// Get the height of the image 
         /// </summary>
-        /// <param name="ImageMatrix">2D array that contains the image</param>
+        /// <param name="imageMatrix">2D array that contains the image</param>
         /// <returns>Image Height</returns>
-        public static int GetHeight(byte[,] ImageMatrix)
+        public static int GetHeight(byte[,] imageMatrix)
         {
-            return ImageMatrix.GetLength(0);
+            return imageMatrix.GetLength(0);
         }
 
         /// <summary>
         /// Get the width of the image 
         /// </summary>
-        /// <param name="ImageMatrix">2D array that contains the image</param>
+        /// <param name="imageMatrix">2D array that contains the image</param>
         /// <returns>Image Width</returns>
-        public static int GetWidth(byte[,] ImageMatrix)
+        public static int GetWidth(byte[,] imageMatrix)
         {
-            return ImageMatrix.GetLength(1);
+            return imageMatrix.GetLength(1);
         }
 
         /// <summary>
         /// Display the given image on the given PictureBox object
         /// </summary>
-        /// <param name="ImageMatrix">2D array that contains the image</param>
-        /// <param name="PicBox">PictureBox object to display the image on it</param>
-        public static void DisplayImage(byte[,] ImageMatrix, PictureBox PicBox)
+        /// <param name="imageMatrix">2D array that contains the image</param>
+        /// <param name="pictureBox">PictureBox object to display the image on it</param>
+        public static void DisplayImage(byte[,] imageMatrix, PictureBox pictureBox)
         {
             // Create Image:
-            //==============
-            int Height = ImageMatrix.GetLength(0);
-            int Width = ImageMatrix.GetLength(1);
+            var height = GetHeight(imageMatrix);
+            var width = GetWidth(imageMatrix);
 
-            Bitmap ImageBMP = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
+            var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
             unsafe
             {
-                BitmapData bmd = ImageBMP.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, ImageBMP.PixelFormat);
-                int nWidth = 0;
-                nWidth = Width * 3;
-                int nOffset = bmd.Stride - nWidth;
-                byte* p = (byte*)bmd.Scan0;
-                for (int i = 0; i < Height; i++)
+                var bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                var imageWidth = width * 3;
+                var strideOffset = bitmapData.Stride - imageWidth;
+                var pixelPtr = (byte*)bitmapData.Scan0;
+                if (pixelPtr == null)
+                    return;
+
+                for (var y = 0; y < height; y++)
                 {
-                    for (int j = 0; j < Width; j++)
+                    for (var x = 0; x < width; x++)
                     {
-                        p[0] = p[1] = p[2] = ImageMatrix[i, j];
-                        p += 3;
+                        pixelPtr[0] = pixelPtr[1] = pixelPtr[2] = imageMatrix[y, x];
+                        pixelPtr += 3;
                     }
 
-                    p += nOffset;
+                    pixelPtr += strideOffset;
                 }
-                ImageBMP.UnlockBits(bmd);
+
+                bitmap.UnlockBits(bitmapData);
             }
-            PicBox.Image = ImageBMP;
+
+            var zoomFactor = 1.0;
+            var newSize = new Size((int)(bitmap.Width * zoomFactor), (int)(bitmap.Height * zoomFactor));
+            var bmp = new Bitmap(bitmap, newSize);
+            pictureBox.Image = bmp;
+            pictureBox.SizeMode = PictureBoxSizeMode.Normal;
         }
 
-        ////1-INSERTION_SORT
-        public static byte[] INSERTION_SORT(byte[] Array, int ArrayLength)
+        //1-InsertionSort
+        public static byte[] InsertionSort(byte[] array, int arrayLength)
         {
-            for (int j = 1; j < ArrayLength; j++)
+            for (var j = 1; j < arrayLength; j++)
             {
-                byte key = Array[j];
-                int i = j - 1;
-                while (i >= 0 && Array[i] > key)
-                    Array[i + 1] = Array[i--];
-                Array[++i] = key;
+                var key = array[j];
+                var i = j - 1;
+                while (i >= 0 && array[i] > key)
+                    array[i + 1] = array[i--];
+
+                array[++i] = key;
             }
-            return Array;
+
+            return array;
         }
-        ////2-SELECTION_SORT
-        public static byte[] SELECTION_SORT(byte[] Array, int ArrayLength)
+
+        //2-SelectionSort
+        public static byte[] SelectionSort(byte[] array, int arrayLength)
         {
-            for (int j = 0; j < ArrayLength - 1; j++)
+            for (var j = 0; j < arrayLength - 1; j++)
             {
-                int smallest = j;
-                for (int i = j + 1; i < ArrayLength; i++)
-                    if (Array[i] < Array[smallest])
+                var smallest = j;
+                for (var i = j + 1; i < arrayLength; i++)
+                {
+                    if (array[i] < array[smallest])
                         smallest = i;
-                if (smallest != j)
+                }
+
+                if (smallest == j)
+                    continue;
+
+                var temp = array[j];
+                array[j] = array[smallest];
+                array[smallest] = temp;
+            }
+
+            return array;
+        }
+
+        //3-BubbleSort
+        public static byte[] BubbleSort(byte[] array, int arrayLength)
+        {
+            for (var i = 0; i < arrayLength - 1; i++)
+            {
+                for (var j = 0; j < arrayLength - 1 - i; j++)
                 {
-                    byte Temp = Array[j];
-                    Array[j] = Array[smallest];
-                    Array[smallest] = Temp;
+                    if (array[j + 1] >= array[j])
+                        continue;
+
+                    var temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
                 }
             }
-            return Array;
+
+            return array;
         }
-        ////3-BUBBLE_SORT
-        public static byte[] BUBBLE_SORT(byte[] Array, int ArrayLength)
+
+        //4-ModifiedBubbleSort
+        public static byte[] ModifiedBubbleSort(byte[] array, int arrayLength)
         {
-            for (int i = 0; i < ArrayLength - 1; i++)
+            for (var i = 0; i < arrayLength - 1; i++)
             {
-                for (int j = 0; j < ArrayLength - 1 - i; j++)
-                    if (Array[j + 1] < Array[j])
-                    {
-                        byte Temp = Array[j];
-                        Array[j] = Array[j + 1];
-                        Array[j + 1] = Temp;
-                    }
-            }
-            return Array;
-        }
-        ////4-MODIFIED_BUBBLE_SORT
-        public static byte[] MODIFIED_BUBBLE_SORT(byte[] Array, int ArrayLength)
-        {
-            for (int i = 0; i < ArrayLength - 1; i++)
-            {
-                bool Sorted = true;
-                for (int j = 0; j < ArrayLength - 1 - i; j++)
-                    if (Array[j + 1] < Array[j])
-                    {
-                        Sorted = false;
-                        byte Temp = Array[j];
-                        Array[j] = Array[j + 1];
-                        Array[j + 1] = Temp;
-                    }
-                if (Sorted)
+                var sorted = true;
+                for (var j = 0; j < arrayLength - 1 - i; j++)
+                {
+                    if (array[j + 1] >= array[j])
+                        continue;
+
+                    sorted = false;
+                    var temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+
+                if (sorted)
                     break;
             }
-            return Array;
-        }
-        ////5-MERGE_SORT
-        public static void MERGE(byte[] Array, int p, int q, int r)
-        {
 
-            int n1 = q - p + 1;
-            int n2 = r - q;
-            byte[] LeftArray = new byte[n1];
-            byte[] RightArray = new byte[n2];
-            for (int i = 0; i < n1; i++)
-                LeftArray[i] = Array[p + i];
-            for (int i = 0; i < n2; i++)
-                RightArray[i] = Array[q + i + 1];
+            return array;
+        }
+
+        //5-MergeSort
+        public static void Merge(byte[] array, int p, int q, int r)
+        {
+            var n1 = q - p + 1;
+            var n2 = r - q;
+            var leftArray = new byte[n1];
+            var rightArray = new byte[n2];
+            for (var i = 0; i < n1; i++)
+                leftArray[i] = array[p + i];
+
+            for (var i = 0; i < n2; i++)
+                rightArray[i] = array[q + i + 1];
+
             int k = 0, j = 0, index = 0;
             while (k < n1 && j < n2)
             {
-                if (LeftArray[k] <= RightArray[j])
-                    Array[p + index] = LeftArray[k++];
+                if (leftArray[k] <= rightArray[j])
+                    array[p + index] = leftArray[k++];
                 else
-                    Array[p + index] = RightArray[j++];
+                    array[p + index] = rightArray[j++];
+
                 index++;
             }
+
             if (k < n1)
+            {
                 for (; k < n1; k++, index++)
-                    Array[p + index] = LeftArray[k];
+                    array[p + index] = leftArray[k];
+            }
             else if (j < n2)
+            {
                 for (; j < n2; j++, index++)
-                    Array[p + index] = RightArray[j];
-        }
-        public static byte[] MERGE_SORT(byte[] Array, int p, int r)
-        {
-            if (p < r)
-            {
-                int q = (p + r) / 2;
-                MERGE_SORT(Array, p, q);
-                MERGE_SORT(Array, q + 1, r);
-                MERGE(Array, p, q, r);
+                    array[p + index] = rightArray[j];
             }
-            return Array;
         }
-        ////6-QUICK_SORT
-        public static int PARTITION(byte[] Array, int p, int r)
+
+        public static byte[] MergeSort(byte[] array, int p, int r)
         {
-            byte x = Array[r];
-            byte Temp;
-            int i = p;
-            for (int j = p; j < r; j++)
+            if (p >= r)
+                return array;
+
+            var q = (p + r) / 2;
+            MergeSort(array, p, q);
+            MergeSort(array, q + 1, r);
+            Merge(array, p, q, r);
+            return array;
+        }
+
+        //6-QuickSort
+        public static int Partition(byte[] array, int p, int r)
+        {
+            var x = array[r];
+            byte temp;
+            var i = p;
+            for (var j = p; j < r; j++)
             {
-                if (Array[j] <= x)
-                {
-                    Temp = Array[j];
-                    Array[j] = Array[i];
-                    Array[i++] = Temp;
-                }
+                if (array[j] > x)
+                    continue;
+
+                temp = array[j];
+                array[j] = array[i];
+                array[i++] = temp;
             }
-            Temp = Array[i];
-            Array[i] = Array[r];
-            Array[r] = Temp;
+
+            temp = array[i];
+            array[i] = array[r];
+            array[r] = temp;
             return i;
         }
-        public static byte[] QUICK_SORT(byte[] Array, int p, int r)
+
+        public static byte[] QuickSort(byte[] array, int p, int r)
         {
-            if (p < r)
-            {
-                int q = PARTITION(Array, p, r);
-                QUICK_SORT(Array, p, q - 1);
-                QUICK_SORT(Array, q + 1, r);
-            }
-            return Array;
+            if (p >= r)
+                return array;
+
+            var q = Partition(array, p, r);
+            QuickSort(array, p, q - 1);
+            QuickSort(array, q + 1, r);
+            return array;
         }
-        ////7-COUNTING_SORT (XXXXX)
-        public static byte[] COUNTING_SORT(byte[] Array, int ArrayLength, byte Max, byte Min)
+
+        //7-CountingSort (XXXXX)
+        public static byte[] CountingSort(byte[] array, int arrayLength, byte max, byte min)
         {
-            byte[] count = new byte[Max - Min + 1];
-            int z = 0;
+            var count = new byte[max - min + 1];
+            var z = 0;
 
-            for (int i = 0; i < count.Length; i++) { count[i] = 0; }
-            for (int i = 0; i < ArrayLength; i++) { count[Array[i] - Min]++; }
+            for (var i = 0; i < count.Length; i++) { count[i] = 0; }
+            for (var i = 0; i < arrayLength; i++) { count[array[i] - min]++; }
 
-            for (int i = Min; i <= Max; i++)
+            for (int i = min; i <= max; i++)
             {
-                while (count[i - Min]-- > 0)
+                while (count[i - min]-- > 0)
                 {
-                    Array[z] = (byte)i;
+                    array[z] = (byte)i;
                     z++;
                 }
             }
-            return Array;
+            return array;
         }
-        ////8-HEAP_SORT
-        public static int LEFT(int i)
-        {
-            return 2 * i + 1;
-        }
-        public static int RIGHT(int i)
-        {
-            return 2 * i + 2;
-        }
-        public static void MAX_HEAPIFY(byte[] Array, int ArrayLength, int i)
-        {
-            int Left = LEFT(i);
-            int Right = RIGHT(i);
-            int Largest;
-            if (Left < ArrayLength && Array[Left] > Array[i])
-                Largest = Left;
-            else
-                Largest = i;
-            if (Right < ArrayLength && Array[Right] > Array[Largest])
-                Largest = Right;
-            if (Largest != i)
-            {
-                byte Temp = Array[i];
-                Array[i] = Array[Largest];
-                Array[Largest] = Temp;
-                MAX_HEAPIFY(Array, ArrayLength, Largest);
-            }
-        }
-        public static void BUILD_MAX_HEAP(byte[] Array, int ArrayLength)
-        {
-            for (int i = ArrayLength / 2 - 1; i >= 0; i--)
-                MAX_HEAPIFY(Array, ArrayLength, i);
-        }
-        public static byte[] HEAP_SORT(byte[] Array, int ArrayLength)
-        {
-            int HeapSize = ArrayLength;
-            BUILD_MAX_HEAP(Array, ArrayLength);
-            for (int i = ArrayLength - 1; i > 0; i--)
-            {
-                byte Temp = Array[0];
-                Array[0] = Array[i];
-                Array[i] = Temp;
-                HeapSize--;
-                MAX_HEAPIFY(Array, HeapSize, 0);
-            }
-            return Array;
-        }
-        ////
-        public static byte Filter1(byte[,] ImageMatrix, int x, int y, int Wmax, int Sort)
-        {
-            byte[] Array;
-            int[] Dx, Dy;
-            if (Wmax % 2 != 0)
-            {
-                Array = new byte[Wmax * Wmax];
-                Dx = new int[Wmax * Wmax];
-                Dy = new int[Wmax * Wmax];
-            }
-            else
-            {
-                Array = new byte[(Wmax + 1) * (Wmax + 1)];
-                Dx = new int[(Wmax + 1) * (Wmax + 1)];
-                Dy = new int[(Wmax + 1) * (Wmax + 1)];
-            }
-            int Index = 0;
-            for (int _y = -(Wmax / 2); _y <= (Wmax / 2); _y++)
-            {
-                for (int _x = -(Wmax / 2); _x <= (Wmax / 2); _x++)
-                {
-                    Dx[Index] = _x;
-                    Dy[Index] = _y;
-                    Index++;
-                }
-            }
-            byte Max, Min, Z;
-            int ArrayLength, Sum, NewY, NewX, Avg;
-            Sum = 0;
-            Max = 0;
-            Min = 255;
-            ArrayLength = 0;
-            Z = ImageMatrix[y, x];
-            var imageWidth = GetWidth(ImageMatrix);
-            var imageHeight = GetHeight(ImageMatrix);
-            for (int i = 0; i < Wmax * Wmax; i++)
-            {
-                NewY = y + Dy[i];
-                NewX = x + Dx[i];
-                if (NewX >= 0 && NewX < imageWidth && NewY >= 0 && NewY < imageHeight)
-                {
-                    Array[ArrayLength] = ImageMatrix[NewY, NewX];
-                    if (Array[ArrayLength] > Max)
-                        Max = Array[ArrayLength];
-                    if (Array[ArrayLength] < Min)
-                        Min = Array[ArrayLength];
-                    Sum += Array[ArrayLength];
-                    ArrayLength++;
-                }
-            }
-            if (Sort == 1) Array = INSERTION_SORT(Array, ArrayLength);
-            else if (Sort == 2) Array = SELECTION_SORT(Array, ArrayLength);
-            else if (Sort == 3) Array = BUBBLE_SORT(Array, ArrayLength);
-            else if (Sort == 4) Array = MODIFIED_BUBBLE_SORT(Array, ArrayLength);
-            else if (Sort == 5) Array = MERGE_SORT(Array, 0, ArrayLength - 1);
-            else if (Sort == 6) Array = QUICK_SORT(Array, 0, ArrayLength - 1);
-            else if (Sort == 7) Array = COUNTING_SORT(Array, ArrayLength, Max, Min);
-            else if (Sort == 8) Array = HEAP_SORT(Array, ArrayLength);
-            Sum -= Max;
-            Sum -= Min;
-            ArrayLength -= 2;
-            Avg = Sum / ArrayLength;
-            return (byte)Avg;
-        }
-        ////
-        public static byte Filter2(byte[,] ImageMatrix, int x, int y, int W, int Wmax, int Sort)
-        {
 
-            byte[] Array = new byte[W * W];
-            int[] Dx = new int[W * W];
-            int[] Dy = new int[W * W];
-            int Index = 0;
-            var wHalf = W / 2;
-            for (int _y = -wHalf; _y <= wHalf ; _y++)
-            {
-                for (int _x = -wHalf; _x <= wHalf; _x++)
-                {
-                    Dx[Index] = _x;
-                    Dy[Index] = _y;
-                    Index++;
-                }
-            }
-            byte Max, Min, Med, Z;
-            int A1, A2, B1, B2, ArrayLength, NewY, NewX;
-            Max = 0;
-            Min = 255;
-            ArrayLength = 0;
-            Z = ImageMatrix[y, x];
-            var imageHeight = GetHeight(ImageMatrix);
-            var imageWidth = GetWidth(ImageMatrix);
-            for (int i = 0; i < W * W; i++)
-            {
-                NewY = y + Dy[i];
-                NewX = x + Dx[i];
-                if (NewX >= 0 && NewX < imageWidth && NewY >= 0 && NewY < imageHeight)
-                {
-                    Array[ArrayLength] = ImageMatrix[NewY, NewX];
-                    if (Array[ArrayLength] > Max)
-                        Max = Array[ArrayLength];
-                    if (Array[ArrayLength] < Min)
-                        Min = Array[ArrayLength];
-                    ArrayLength++;
-                }
-            }
-            if (Sort == 1) Array = INSERTION_SORT(Array, ArrayLength);
-            else if (Sort == 2) Array = SELECTION_SORT(Array, ArrayLength);
-            else if (Sort == 3) Array = BUBBLE_SORT(Array, ArrayLength);
-            else if (Sort == 4) Array = MODIFIED_BUBBLE_SORT(Array, ArrayLength);
-            else if (Sort == 5) Array = MERGE_SORT(Array, 0, ArrayLength - 1);
-            else if (Sort == 6) Array = QUICK_SORT(Array, 0, ArrayLength - 1);
-            else if (Sort == 7) Array = COUNTING_SORT(Array, ArrayLength, Max, Min);
-            else if (Sort == 8) Array = HEAP_SORT(Array, ArrayLength);
+        //8-HeapSort
+        public static int Left(int i)
+        {
+            return i << 1 + 1;
+        }
 
-            Min = Array[0];
-            Med = Array[ArrayLength / 2];
-            A1 = Med - Min;
-            A2 = Max - Med;
-            if (A1 > 0 && A2 > 0)
+        public static int Right(int i)
+        {
+            return i << 1 + 2;
+        }
+
+        public static void MaxHeapify(byte[] array, int arrayLength, int i)
+        {
+            while (true)
             {
-                B1 = Z - Min;
-                B2 = Max - Z;
-                if (B1 > 0 && B2 > 0)
-                    return Z;
+                var left = Left(i);
+                var right = Right(i);
+                int largest;
+                if (left < arrayLength && array[left] > array[i])
+                    largest = left;
                 else
-                {
-                    if (W + 2 < Wmax)
-                        return Filter2(ImageMatrix, x, y, W + 2, Wmax, Sort);
-                    else
-                        return Med;
-                }
+                    largest = i;
+
+                if (right < arrayLength && array[right] > array[largest])
+                    largest = right;
+
+                if (largest == i)
+                    return;
+
+                var temp = array[i];
+                array[i] = array[largest];
+                array[largest] = temp;
+                i = largest;
+            }
+        }
+
+        public static void BuildMaxHeap(byte[] array, int arrayLength)
+        {
+            for (var i = arrayLength / 2 - 1; i >= 0; i--)
+                MaxHeapify(array, arrayLength, i);
+        }
+
+        public static byte[] HeapSort(byte[] array, int arrayLength)
+        {
+            var heapSize = arrayLength;
+            BuildMaxHeap(array, arrayLength);
+            for (var i = arrayLength - 1; i > 0; i--)
+            {
+                var temp = array[0];
+                array[0] = array[i];
+                array[i] = temp;
+                heapSize--;
+                MaxHeapify(array, heapSize, 0);
+            }
+
+            return array;
+        }
+
+        public static byte AlphaTrimFilter(byte[,] imageMatrix, int x, int y, int maxSize, int sort)
+        {
+            byte[] array;
+            int[] dx, dy;
+            if (maxSize % 2 != 0)
+            {
+                array = new byte[maxSize * maxSize];
+                dx = new int[maxSize * maxSize];
+                dy = new int[maxSize * maxSize];
             }
             else
             {
-                return Med;
+                array = new byte[(maxSize + 1) * (maxSize + 1)];
+                dx = new int[(maxSize + 1) * (maxSize + 1)];
+                dy = new int[(maxSize + 1) * (maxSize + 1)];
             }
 
-        }
-        ////
-        public static byte[,] ImageFilter(byte[,] ImageMatrix, int Max_Size, int Sort, int filter)
-        {
-            byte[,] ImageMatrix2 = ImageMatrix;
-            var imageHeight = GetHeight(ImageMatrix);
-            var imageWidth = GetWidth(ImageMatrix);
-            for (int y = 0; y < imageHeight; y++)
+            var index = 0;
+            for (var yShift = -(maxSize / 2); yShift <= maxSize / 2; yShift++)
             {
-                for (int x = 0; x < imageWidth; x++)
+                for (var xShift = -(maxSize / 2); xShift <= maxSize / 2; xShift++)
+                {
+                    dx[index] = xShift;
+                    dy[index] = yShift;
+                    index++;
+                }
+            }
+
+            var sum = 0;
+            byte max = 0;
+            byte min = 255;
+            var arrayLength = 0;
+            var imageWidth = GetWidth(imageMatrix);
+            var imageHeight = GetHeight(imageMatrix);
+            for (var i = 0; i < maxSize * maxSize; i++)
+            {
+                var newY = y + dy[i];
+                var newX = x + dx[i];
+                if (newX < 0 || newX >= imageWidth || newY < 0 || newY >= imageHeight)
+                    continue;
+
+                array[arrayLength] = imageMatrix[newY, newX];
+                if (array[arrayLength] > max)
+                    max = array[arrayLength];
+
+                if (array[arrayLength] < min)
+                    min = array[arrayLength];
+
+                sum += array[arrayLength];
+                arrayLength++;
+            }
+
+            sum -= max;
+            sum -= min;
+            arrayLength -= 2;
+            var avg = sum / arrayLength;
+            return (byte)avg;
+        }
+
+        public static byte AdaptiveMedianFilter(byte[,] imageMatrix, int x, int y, int w, int maxWidth, int sort)
+        {
+            while (true)
+            {
+                var array = new byte[w * w];
+                var dx = new int[w * w];
+                var dy = new int[w * w];
+                var index = 0;
+                var wHalf = w / 2;
+                for (var yShift = -wHalf; yShift <= wHalf; yShift++)
+                {
+                    for (var xShift = -wHalf; xShift <= wHalf; xShift++)
+                    {
+                        dx[index] = xShift;
+                        dy[index] = yShift;
+                        index++;
+                    }
+                }
+
+                byte max = 0;
+                byte min = 255;
+                var arrayLength = 0;
+                var z = imageMatrix[y, x];
+                var imageHeight = GetHeight(imageMatrix);
+                var imageWidth = GetWidth(imageMatrix);
+                for (var i = 0; i < w * w; i++)
+                {
+                    var newY = y + dy[i];
+                    var newX = x + dx[i];
+                    if (newX < 0 || newX >= imageWidth || newY < 0 || newY >= imageHeight)
+                        continue;
+
+                    array[arrayLength] = imageMatrix[newY, newX];
+                    if (array[arrayLength] > max)
+                        max = array[arrayLength];
+
+                    if (array[arrayLength] < min)
+                        min = array[arrayLength];
+
+                    arrayLength++;
+                }
+
+                switch (sort)
+                {
+                    case 1:
+                        array = InsertionSort(array, arrayLength);
+                        break;
+
+                    case 2:
+                        array = SelectionSort(array, arrayLength);
+                        break;
+
+                    case 3:
+                        array = BubbleSort(array, arrayLength);
+                        break;
+
+                    case 4:
+                        array = ModifiedBubbleSort(array, arrayLength);
+                        break;
+
+                    case 5:
+                        array = MergeSort(array, 0, arrayLength - 1);
+                        break;
+
+                    case 6:
+                        array = QuickSort(array, 0, arrayLength - 1);
+                        break;
+
+                    case 7:
+                        array = CountingSort(array, arrayLength, max, min);
+                        break;
+
+                    case 8:
+                        array = HeapSort(array, arrayLength);
+                        break;
+                }
+
+                min = array[0];
+                var med = array[arrayLength / 2];
+                var a1 = med - min;
+                var a2 = max - med;
+                if (a1 <= 0 || a2 <= 0)
+                    return med;
+
+                var b1 = z - min;
+                var b2 = max - z;
+                if (b1 > 0 && b2 > 0)
+                    return z;
+
+                if (w + 2 >= maxWidth)
+                    return med;
+
+                w = w + 2;
+            }
+        }
+
+        public static byte[,] ImageFilter(byte[,] imageMatrix, int maxSize, int sort, int filter)
+        {
+            var imageMatrix2 = imageMatrix;
+            var imageHeight = GetHeight(imageMatrix);
+            var imageWidth = GetWidth(imageMatrix);
+            for (var y = 0; y < imageHeight; y++)
+            {
+                for (var x = 0; x < imageWidth; x++)
                 {
                     if (filter == 1)
-                        ImageMatrix2[y, x] = Filter1(ImageMatrix, x, y, Max_Size, Sort);
+                        imageMatrix2[y, x] = AlphaTrimFilter(imageMatrix, x, y, maxSize, sort);
                     else
-                        ImageMatrix2[y, x] = Filter2(ImageMatrix, x, y, 3, Max_Size, Sort);
+                        imageMatrix2[y, x] = AdaptiveMedianFilter(imageMatrix, x, y, 3, maxSize, sort);
                 }
             }
 
-            return ImageMatrix2;
+            return imageMatrix2;
         }
     }
 }

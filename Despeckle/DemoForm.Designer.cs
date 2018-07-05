@@ -1,4 +1,4 @@
-﻿namespace IMAGE_FILTERS
+﻿namespace IQBackOffice.Despeckle
 {
     partial class DemoForm
     {
@@ -28,106 +28,176 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.groupBox2.SuspendLayout();
+            this.ViewGroupBox = new System.Windows.Forms.GroupBox();
+            this.ImagesSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.OriginalPictureBox = new System.Windows.Forms.PictureBox();
+            this.FilteredPictureBox = new System.Windows.Forms.PictureBox();
+            this.ElapsedTimeLabel = new System.Windows.Forms.Label();
+            this.TimeLabel = new System.Windows.Forms.Label();
+            this.ControlGroupBox = new System.Windows.Forms.GroupBox();
+            this.QuitButton = new System.Windows.Forms.Button();
+            this.FilterAgainButton = new System.Windows.Forms.Button();
+            this.FilterTypeCombo = new System.Windows.Forms.ComboBox();
+            this.SortCombo = new System.Windows.Forms.ComboBox();
+            this.MaxSizeTextbox = new System.Windows.Forms.TextBox();
+            this.FilterButton = new System.Windows.Forms.Button();
+            this.MaxSizeLabel = new System.Windows.Forms.Label();
+            this.OpenImageButton = new System.Windows.Forms.Button();
+            this.ViewGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ImagesSplitContainer)).BeginInit();
+            this.ImagesSplitContainer.Panel1.SuspendLayout();
+            this.ImagesSplitContainer.Panel2.SuspendLayout();
+            this.ImagesSplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OriginalPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FilteredPictureBox)).BeginInit();
+            this.ControlGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // ViewGroupBox
             // 
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.pictureBox2);
-            this.groupBox1.Controls.Add(this.pictureBox1);
-            this.groupBox1.Location = new System.Drawing.Point(17, 5);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1221, 442);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "View Box";
+            this.ViewGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewGroupBox.Controls.Add(this.ImagesSplitContainer);
+            this.ViewGroupBox.Location = new System.Drawing.Point(17, 5);
+            this.ViewGroupBox.Name = "ViewGroupBox";
+            this.ViewGroupBox.Size = new System.Drawing.Size(1221, 442);
+            this.ViewGroupBox.TabIndex = 0;
+            this.ViewGroupBox.TabStop = false;
+            this.ViewGroupBox.Text = "View Box";
             // 
-            // label3
+            // ImagesSplitContainer
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(1131, 123);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(0, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.ImagesSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ImagesSplitContainer.IsSplitterFixed = true;
+            this.ImagesSplitContainer.Location = new System.Drawing.Point(18, 18);
+            this.ImagesSplitContainer.Name = "ImagesSplitContainer";
             // 
-            // label2
+            // ImagesSplitContainer.Panel1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(1131, 85);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Time";
+            this.ImagesSplitContainer.Panel1.Controls.Add(this.OriginalPictureBox);
             // 
-            // pictureBox2
+            // ImagesSplitContainer.Panel2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(570, 18);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(540, 406);
-            this.pictureBox2.TabIndex = 1;
-            this.pictureBox2.TabStop = false;
+            this.ImagesSplitContainer.Panel2.Controls.Add(this.FilteredPictureBox);
+            this.ImagesSplitContainer.Size = new System.Drawing.Size(1188, 409);
+            this.ImagesSplitContainer.SplitterDistance = 594;
+            this.ImagesSplitContainer.SplitterWidth = 1;
+            this.ImagesSplitContainer.TabIndex = 4;
             // 
-            // pictureBox1
+            // OriginalPictureBox
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(22, 18);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(540, 406);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.OriginalPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.OriginalPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.OriginalPictureBox.Name = "OriginalPictureBox";
+            this.OriginalPictureBox.Size = new System.Drawing.Size(592, 409);
+            this.OriginalPictureBox.TabIndex = 0;
+            this.OriginalPictureBox.TabStop = false;
             // 
-            // groupBox2
+            // FilteredPictureBox
             // 
-            this.groupBox2.Controls.Add(this.button4);
-            this.groupBox2.Controls.Add(this.comboBox2);
-            this.groupBox2.Controls.Add(this.comboBox1);
-            this.groupBox2.Controls.Add(this.textBox1);
-            this.groupBox2.Controls.Add(this.button2);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Location = new System.Drawing.Point(17, 453);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1221, 75);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Control Box";
+            this.FilteredPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FilteredPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.FilteredPictureBox.Name = "FilteredPictureBox";
+            this.FilteredPictureBox.Size = new System.Drawing.Size(593, 409);
+            this.FilteredPictureBox.TabIndex = 1;
+            this.FilteredPictureBox.TabStop = false;
             // 
-            // comboBox2
+            // ElapsedTimeLabel
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.ElapsedTimeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ElapsedTimeLabel.AutoSize = true;
+            this.ElapsedTimeLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ElapsedTimeLabel.Location = new System.Drawing.Point(937, 29);
+            this.ElapsedTimeLabel.Name = "ElapsedTimeLabel";
+            this.ElapsedTimeLabel.Size = new System.Drawing.Size(0, 20);
+            this.ElapsedTimeLabel.TabIndex = 3;
+            // 
+            // TimeLabel
+            // 
+            this.TimeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TimeLabel.AutoSize = true;
+            this.TimeLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TimeLabel.Location = new System.Drawing.Point(885, 29);
+            this.TimeLabel.Name = "TimeLabel";
+            this.TimeLabel.Size = new System.Drawing.Size(48, 20);
+            this.TimeLabel.TabIndex = 2;
+            this.TimeLabel.Text = "Time:";
+            // 
+            // ControlGroupBox
+            // 
+            this.ControlGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlGroupBox.Controls.Add(this.QuitButton);
+            this.ControlGroupBox.Controls.Add(this.ElapsedTimeLabel);
+            this.ControlGroupBox.Controls.Add(this.FilterAgainButton);
+            this.ControlGroupBox.Controls.Add(this.TimeLabel);
+            this.ControlGroupBox.Controls.Add(this.FilterTypeCombo);
+            this.ControlGroupBox.Controls.Add(this.SortCombo);
+            this.ControlGroupBox.Controls.Add(this.MaxSizeTextbox);
+            this.ControlGroupBox.Controls.Add(this.FilterButton);
+            this.ControlGroupBox.Controls.Add(this.MaxSizeLabel);
+            this.ControlGroupBox.Controls.Add(this.OpenImageButton);
+            this.ControlGroupBox.Location = new System.Drawing.Point(17, 453);
+            this.ControlGroupBox.Name = "ControlGroupBox";
+            this.ControlGroupBox.Size = new System.Drawing.Size(1221, 75);
+            this.ControlGroupBox.TabIndex = 1;
+            this.ControlGroupBox.TabStop = false;
+            this.ControlGroupBox.Text = "Control Box";
+            // 
+            // QuitButton
+            // 
+            this.QuitButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.QuitButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.QuitButton.Location = new System.Drawing.Point(1100, 24);
+            this.QuitButton.Name = "QuitButton";
+            this.QuitButton.Size = new System.Drawing.Size(106, 31);
+            this.QuitButton.TabIndex = 9;
+            this.QuitButton.Text = "Quit";
+            this.QuitButton.UseVisualStyleBackColor = true;
+            this.QuitButton.Click += new System.EventHandler(this.OnQuitButtonClick);
+            // 
+            // FilterAgainButton
+            // 
+            this.FilterAgainButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FilterAgainButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FilterAgainButton.Location = new System.Drawing.Point(733, 24);
+            this.FilterAgainButton.Name = "FilterAgainButton";
+            this.FilterAgainButton.Size = new System.Drawing.Size(106, 31);
+            this.FilterAgainButton.TabIndex = 8;
+            this.FilterAgainButton.Text = "Filter Again";
+            this.FilterAgainButton.UseVisualStyleBackColor = true;
+            this.FilterAgainButton.Click += new System.EventHandler(this.OnFilterAgainButtonClick);
+            // 
+            // FilterTypeCombo
+            // 
+            this.FilterTypeCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FilterTypeCombo.FormattingEnabled = true;
+            this.FilterTypeCombo.Items.AddRange(new object[] {
             "1)Alpha-trim filter",
             "2)Adaptive median filter"});
-            this.comboBox2.Location = new System.Drawing.Point(649, 46);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(179, 21);
-            this.comboBox2.TabIndex = 7;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.FilterTypeCombo.Location = new System.Drawing.Point(426, 44);
+            this.FilterTypeCombo.Name = "FilterTypeCombo";
+            this.FilterTypeCombo.Size = new System.Drawing.Size(179, 21);
+            this.FilterTypeCombo.TabIndex = 7;
             // 
-            // comboBox1
+            // SortCombo
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.SortCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SortCombo.FormattingEnabled = true;
+            this.SortCombo.Items.AddRange(new object[] {
             "0)None",
             "1)Insertion Sort",
             "2)Selection Sort",
@@ -137,96 +207,97 @@
             "6)Quick Sort",
             "7)Counting Sort",
             "8)Heap Sort"});
-            this.comboBox1.Location = new System.Drawing.Point(649, 19);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(179, 21);
-            this.comboBox1.TabIndex = 6;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.SortCombo.Location = new System.Drawing.Point(426, 17);
+            this.SortCombo.Name = "SortCombo";
+            this.SortCombo.Size = new System.Drawing.Size(179, 21);
+            this.SortCombo.TabIndex = 6;
             // 
-            // textBox1
+            // MaxSizeTextbox
             // 
-            this.textBox1.Location = new System.Drawing.Point(242, 33);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(83, 20);
-            this.textBox1.TabIndex = 4;
+            this.MaxSizeTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MaxSizeTextbox.Location = new System.Drawing.Point(232, 30);
+            this.MaxSizeTextbox.Name = "MaxSizeTextbox";
+            this.MaxSizeTextbox.Size = new System.Drawing.Size(83, 20);
+            this.MaxSizeTextbox.TabIndex = 4;
             // 
-            // button2
+            // FilterButton
             // 
-            this.button2.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(844, 22);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(99, 31);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Filter";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.FilterButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FilterButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FilterButton.Location = new System.Drawing.Point(621, 24);
+            this.FilterButton.Name = "FilterButton";
+            this.FilterButton.Size = new System.Drawing.Size(106, 31);
+            this.FilterButton.TabIndex = 1;
+            this.FilterButton.Text = "Filter";
+            this.FilterButton.UseVisualStyleBackColor = true;
+            this.FilterButton.Click += new System.EventHandler(this.OnFilterButtonClick);
             // 
-            // label1
+            // MaxSizeLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(161, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 18);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Max Size";
+            this.MaxSizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MaxSizeLabel.AutoSize = true;
+            this.MaxSizeLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MaxSizeLabel.Location = new System.Drawing.Point(151, 30);
+            this.MaxSizeLabel.Name = "MaxSizeLabel";
+            this.MaxSizeLabel.Size = new System.Drawing.Size(74, 20);
+            this.MaxSizeLabel.TabIndex = 3;
+            this.MaxSizeLabel.Text = "Max Size:";
             // 
-            // button1
+            // OpenImageButton
             // 
-            this.button1.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(31, 22);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(106, 36);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Open Image";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.OpenImageButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.OpenImageButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpenImageButton.Location = new System.Drawing.Point(21, 24);
+            this.OpenImageButton.Name = "OpenImageButton";
+            this.OpenImageButton.Size = new System.Drawing.Size(106, 31);
+            this.OpenImageButton.TabIndex = 0;
+            this.OpenImageButton.Text = "Open Image";
+            this.OpenImageButton.UseVisualStyleBackColor = true;
+            this.OpenImageButton.Click += new System.EventHandler(this.OnOpenImageButtonClick);
             // 
-            // button4
-            // 
-            this.button4.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(949, 22);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(105, 31);
-            this.button4.TabIndex = 8;
-            this.button4.Text = "Filter Again";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // Form1
+            // DemoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1250, 544);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Name = "Form1";
+            this.Controls.Add(this.ControlGroupBox);
+            this.Controls.Add(this.ViewGroupBox);
+            this.Name = "DemoForm";
             this.Text = "Image Filters";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.ViewGroupBox.ResumeLayout(false);
+            this.ImagesSplitContainer.Panel1.ResumeLayout(false);
+            this.ImagesSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ImagesSplitContainer)).EndInit();
+            this.ImagesSplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.OriginalPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FilteredPictureBox)).EndInit();
+            this.ControlGroupBox.ResumeLayout(false);
+            this.ControlGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.GroupBox ViewGroupBox;
+        private System.Windows.Forms.PictureBox FilteredPictureBox;
+        private System.Windows.Forms.PictureBox OriginalPictureBox;
+        private System.Windows.Forms.GroupBox ControlGroupBox;
+        private System.Windows.Forms.TextBox MaxSizeTextbox;
+        private System.Windows.Forms.Label MaxSizeLabel;
+        private System.Windows.Forms.Button FilterButton;
+        private System.Windows.Forms.Button OpenImageButton;
+        private System.Windows.Forms.ComboBox SortCombo;
+        private System.Windows.Forms.ComboBox FilterTypeCombo;
+        private System.Windows.Forms.Label ElapsedTimeLabel;
+        private System.Windows.Forms.Label TimeLabel;
+        private System.Windows.Forms.Button FilterAgainButton;
+        private System.Windows.Forms.SplitContainer ImagesSplitContainer;
+        private System.Windows.Forms.Button QuitButton;
     }
 }
 
