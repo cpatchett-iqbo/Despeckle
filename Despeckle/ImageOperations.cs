@@ -1,16 +1,25 @@
 ﻿namespace IQBackOffice.Despeckle
 {
+    #region Usings
+
+    using System;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Windows.Forms;
 
+    #endregion
+
     public class ImageOperations
     {
         /// <summary>
-        /// Open an image, convert it to gray scale and load it into 2D array of size (Height x Width)
+        ///     Open an image, convert it to gray scale and load it into 2D array of size (Height x Width)
         /// </summary>
-        /// <param name="imagePath">Image file path</param>
-        /// <returns>2D array of gray values</returns>
+        /// <param name="imagePath">
+        ///     Image file path
+        /// </param>
+        /// <returns>
+        ///     2D array of gray values
+        /// </returns>
         public static byte[,] OpenImage(string imagePath)
         {
             var originalImage = new Bitmap(imagePath);
@@ -21,10 +30,12 @@
 
             unsafe
             {
-                var bitmapData = originalImage.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, originalImage.PixelFormat);
+                var bitmapData = originalImage.LockBits(new Rectangle(0, 0, width, height),
+                                                        ImageLockMode.ReadWrite,
+                                                        originalImage.PixelFormat);
                 int x, y;
                 int byteWidth;
-                var bitsPerPixel = 0;
+                int bitsPerPixel;
 
                 switch (originalImage.PixelFormat)
                 {
@@ -59,7 +70,6 @@
 
                         // TODO: Throw up error dialog.
                         return null;
-
                 }
 
                 var strideOffset = bitmapData.Stride - byteWidth;
@@ -104,30 +114,42 @@
         }
 
         /// <summary>
-        /// Get the height of the image 
+        ///     Get the height of the image
         /// </summary>
-        /// <param name="imageMatrix">2D array that contains the image</param>
-        /// <returns>Image Height</returns>
+        /// <param name="imageMatrix">
+        ///     2D array that contains the image
+        /// </param>
+        /// <returns>
+        ///     Image Height
+        /// </returns>
         public static int GetHeight(byte[,] imageMatrix)
         {
             return imageMatrix.GetLength(0);
         }
 
         /// <summary>
-        /// Get the width of the image 
+        ///     Get the width of the image
         /// </summary>
-        /// <param name="imageMatrix">2D array that contains the image</param>
-        /// <returns>Image Width</returns>
+        /// <param name="imageMatrix">
+        ///     2D array that contains the image
+        /// </param>
+        /// <returns>
+        ///     Image Width
+        /// </returns>
         public static int GetWidth(byte[,] imageMatrix)
         {
             return imageMatrix.GetLength(1);
         }
 
         /// <summary>
-        /// Display the given image on the given PictureBox object
+        ///     Display the given image on the given PictureBox object
         /// </summary>
-        /// <param name="imageMatrix">2D array that contains the image</param>
-        /// <param name="pictureBox">PictureBox object to display the image on it</param>
+        /// <param name="imageMatrix">
+        ///     2D array that contains the image
+        /// </param>
+        /// <param name="pictureBox">
+        ///     PictureBox object to display the image on it
+        /// </param>
         public static void DisplayImage(byte[,] imageMatrix, PictureBox pictureBox)
         {
             // Create Image:
@@ -164,247 +186,6 @@
             var bmp = new Bitmap(bitmap, newSize);
             pictureBox.Image = bmp;
             pictureBox.SizeMode = PictureBoxSizeMode.Normal;
-        }
-
-        //1-InsertionSort
-        public static byte[] InsertionSort(byte[] array, int arrayLength)
-        {
-            for (var j = 1; j < arrayLength; j++)
-            {
-                var key = array[j];
-                var i = j - 1;
-                while (i >= 0 && array[i] > key)
-                    array[i + 1] = array[i--];
-
-                array[++i] = key;
-            }
-
-            return array;
-        }
-
-        //2-SelectionSort
-        public static byte[] SelectionSort(byte[] array, int arrayLength)
-        {
-            for (var j = 0; j < arrayLength - 1; j++)
-            {
-                var smallest = j;
-                for (var i = j + 1; i < arrayLength; i++)
-                {
-                    if (array[i] < array[smallest])
-                        smallest = i;
-                }
-
-                if (smallest == j)
-                    continue;
-
-                var temp = array[j];
-                array[j] = array[smallest];
-                array[smallest] = temp;
-            }
-
-            return array;
-        }
-
-        //3-BubbleSort
-        public static byte[] BubbleSort(byte[] array, int arrayLength)
-        {
-            for (var i = 0; i < arrayLength - 1; i++)
-            {
-                for (var j = 0; j < arrayLength - 1 - i; j++)
-                {
-                    if (array[j + 1] >= array[j])
-                        continue;
-
-                    var temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-            }
-
-            return array;
-        }
-
-        //4-ModifiedBubbleSort
-        public static byte[] ModifiedBubbleSort(byte[] array, int arrayLength)
-        {
-            for (var i = 0; i < arrayLength - 1; i++)
-            {
-                var sorted = true;
-                for (var j = 0; j < arrayLength - 1 - i; j++)
-                {
-                    if (array[j + 1] >= array[j])
-                        continue;
-
-                    sorted = false;
-                    var temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-
-                if (sorted)
-                    break;
-            }
-
-            return array;
-        }
-
-        //5-MergeSort
-        public static void Merge(byte[] array, int p, int q, int r)
-        {
-            var n1 = q - p + 1;
-            var n2 = r - q;
-            var leftArray = new byte[n1];
-            var rightArray = new byte[n2];
-            for (var i = 0; i < n1; i++)
-                leftArray[i] = array[p + i];
-
-            for (var i = 0; i < n2; i++)
-                rightArray[i] = array[q + i + 1];
-
-            int k = 0, j = 0, index = 0;
-            while (k < n1 && j < n2)
-            {
-                if (leftArray[k] <= rightArray[j])
-                    array[p + index] = leftArray[k++];
-                else
-                    array[p + index] = rightArray[j++];
-
-                index++;
-            }
-
-            if (k < n1)
-            {
-                for (; k < n1; k++, index++)
-                    array[p + index] = leftArray[k];
-            }
-            else if (j < n2)
-            {
-                for (; j < n2; j++, index++)
-                    array[p + index] = rightArray[j];
-            }
-        }
-
-        public static byte[] MergeSort(byte[] array, int p, int r)
-        {
-            if (p >= r)
-                return array;
-
-            var q = (p + r) / 2;
-            MergeSort(array, p, q);
-            MergeSort(array, q + 1, r);
-            Merge(array, p, q, r);
-            return array;
-        }
-
-        //6-QuickSort
-        public static int Partition(byte[] array, int p, int r)
-        {
-            var x = array[r];
-            byte temp;
-            var i = p;
-            for (var j = p; j < r; j++)
-            {
-                if (array[j] > x)
-                    continue;
-
-                temp = array[j];
-                array[j] = array[i];
-                array[i++] = temp;
-            }
-
-            temp = array[i];
-            array[i] = array[r];
-            array[r] = temp;
-            return i;
-        }
-
-        public static byte[] QuickSort(byte[] array, int p, int r)
-        {
-            if (p >= r)
-                return array;
-
-            var q = Partition(array, p, r);
-            QuickSort(array, p, q - 1);
-            QuickSort(array, q + 1, r);
-            return array;
-        }
-
-        //7-CountingSort (XXXXX)
-        public static byte[] CountingSort(byte[] array, int arrayLength, byte max, byte min)
-        {
-            var count = new byte[max - min + 1];
-            var z = 0;
-
-            for (var i = 0; i < count.Length; i++) { count[i] = 0; }
-            for (var i = 0; i < arrayLength; i++) { count[array[i] - min]++; }
-
-            for (int i = min; i <= max; i++)
-            {
-                while (count[i - min]-- > 0)
-                {
-                    array[z] = (byte)i;
-                    z++;
-                }
-            }
-            return array;
-        }
-
-        //8-HeapSort
-        public static int Left(int i)
-        {
-            return i << 1 + 1;
-        }
-
-        public static int Right(int i)
-        {
-            return i << 1 + 2;
-        }
-
-        public static void MaxHeapify(byte[] array, int arrayLength, int i)
-        {
-            while (true)
-            {
-                var left = Left(i);
-                var right = Right(i);
-                int largest;
-                if (left < arrayLength && array[left] > array[i])
-                    largest = left;
-                else
-                    largest = i;
-
-                if (right < arrayLength && array[right] > array[largest])
-                    largest = right;
-
-                if (largest == i)
-                    return;
-
-                var temp = array[i];
-                array[i] = array[largest];
-                array[largest] = temp;
-                i = largest;
-            }
-        }
-
-        public static void BuildMaxHeap(byte[] array, int arrayLength)
-        {
-            for (var i = arrayLength / 2 - 1; i >= 0; i--)
-                MaxHeapify(array, arrayLength, i);
-        }
-
-        public static byte[] HeapSort(byte[] array, int arrayLength)
-        {
-            var heapSize = arrayLength;
-            BuildMaxHeap(array, arrayLength);
-            for (var i = arrayLength - 1; i > 0; i--)
-            {
-                var temp = array[0];
-                array[0] = array[i];
-                array[i] = temp;
-                heapSize--;
-                MaxHeapify(array, heapSize, 0);
-            }
-
-            return array;
         }
 
         public static byte AlphaTrimFilter(byte[,] imageMatrix, int x, int y, int maxSize, int sort)
@@ -511,35 +292,43 @@
                 switch (sort)
                 {
                     case 1:
-                        array = InsertionSort(array, arrayLength);
+                        array = Sorting.InsertionSort(array, arrayLength);
                         break;
 
                     case 2:
-                        array = SelectionSort(array, arrayLength);
+                        array = Sorting.SelectionSort(array, arrayLength);
                         break;
 
                     case 3:
-                        array = BubbleSort(array, arrayLength);
+                        array = Sorting.BubbleSort(array, arrayLength);
                         break;
 
                     case 4:
-                        array = ModifiedBubbleSort(array, arrayLength);
+                        array = Sorting.ModifiedBubbleSort(array, arrayLength);
                         break;
 
                     case 5:
-                        array = MergeSort(array, 0, arrayLength - 1);
+                        array = Sorting.MergeSort(array, 0, arrayLength - 1);
                         break;
 
                     case 6:
-                        array = QuickSort(array, 0, arrayLength - 1);
+                        array = Sorting.QuickSort(array, 0, arrayLength - 1);
                         break;
 
                     case 7:
-                        array = CountingSort(array, arrayLength, max, min);
+                        array = Sorting.CountingSort(array, arrayLength, max, min);
                         break;
 
                     case 8:
-                        array = HeapSort(array, arrayLength);
+                        array = Sorting.HeapSort(array, arrayLength);
+                        break;
+
+                    case 9:
+                        array = Sorting.RadixSort(array, arrayLength);
+                        break;
+
+                    case 10:
+                        Array.Sort(array);
                         break;
                 }
 
