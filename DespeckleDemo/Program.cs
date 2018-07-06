@@ -1,4 +1,4 @@
-﻿namespace IQBackOffice.Despeckle
+﻿namespace IQBackOffice.Despeckle.Demo
 {
     using System;
     using System.Windows.Forms;

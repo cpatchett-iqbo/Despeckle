@@ -1,4 +1,4 @@
-﻿namespace IQBackOffice.Despeckle
+﻿namespace IQBackOffice.Despeckle.Demo
 {
     partial class DemoForm
     {
@@ -35,12 +35,13 @@
             this.ElapsedTimeLabel = new System.Windows.Forms.Label();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.ControlGroupBox = new System.Windows.Forms.GroupBox();
-            this.QuitButton = new System.Windows.Forms.Button();
+            this.FilterPanel = new System.Windows.Forms.Panel();
+            this.SortCombo = new System.Windows.Forms.ComboBox();
+            this.FilterButton = new System.Windows.Forms.Button();
             this.FilterAgainButton = new System.Windows.Forms.Button();
             this.FilterTypeCombo = new System.Windows.Forms.ComboBox();
-            this.SortCombo = new System.Windows.Forms.ComboBox();
+            this.QuitButton = new System.Windows.Forms.Button();
             this.MaxSizeTextbox = new System.Windows.Forms.TextBox();
-            this.FilterButton = new System.Windows.Forms.Button();
             this.MaxSizeLabel = new System.Windows.Forms.Label();
             this.OpenImageButton = new System.Windows.Forms.Button();
             this.ViewGroupBox.SuspendLayout();
@@ -51,14 +52,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.OriginalPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FilteredPictureBox)).BeginInit();
             this.ControlGroupBox.SuspendLayout();
+            this.FilterPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // ViewGroupBox
             // 
-            this.ViewGroupBox.Anchor =
-                ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                       | System.Windows.Forms.AnchorStyles.Left)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ViewGroupBox.Controls.Add(this.ImagesSplitContainer);
             this.ViewGroupBox.Location = new System.Drawing.Point(17, 5);
             this.ViewGroupBox.Name = "ViewGroupBox";
@@ -69,10 +70,9 @@
             // 
             // ImagesSplitContainer
             // 
-            this.ImagesSplitContainer.Anchor =
-                ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                       | System.Windows.Forms.AnchorStyles.Left)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
+            this.ImagesSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ImagesSplitContainer.IsSplitterFixed = true;
             this.ImagesSplitContainer.Location = new System.Drawing.Point(18, 18);
             this.ImagesSplitContainer.Name = "ImagesSplitContainer";
@@ -91,53 +91,40 @@
             // 
             // OriginalPictureBox
             // 
-            this.OriginalPictureBox.Anchor =
-                ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                       | System.Windows.Forms.AnchorStyles.Left)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
-            this.OriginalPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.OriginalPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.OriginalPictureBox.Location = new System.Drawing.Point(3, 0);
             this.OriginalPictureBox.Name = "OriginalPictureBox";
-            this.OriginalPictureBox.Size = new System.Drawing.Size(592, 409);
+            this.OriginalPictureBox.Size = new System.Drawing.Size(589, 409);
             this.OriginalPictureBox.TabIndex = 0;
             this.OriginalPictureBox.TabStop = false;
             // 
             // FilteredPictureBox
             // 
-            this.FilteredPictureBox.Anchor =
-                ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                       | System.Windows.Forms.AnchorStyles.Left)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
+            this.FilteredPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.FilteredPictureBox.Location = new System.Drawing.Point(0, 0);
             this.FilteredPictureBox.Name = "FilteredPictureBox";
-            this.FilteredPictureBox.Size = new System.Drawing.Size(593, 409);
+            this.FilteredPictureBox.Size = new System.Drawing.Size(605, 409);
             this.FilteredPictureBox.TabIndex = 1;
             this.FilteredPictureBox.TabStop = false;
             // 
             // ElapsedTimeLabel
             // 
-            this.ElapsedTimeLabel.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
             this.ElapsedTimeLabel.AutoSize = true;
-            this.ElapsedTimeLabel.Font =
-                new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ElapsedTimeLabel.Location = new System.Drawing.Point(937, 29);
+            this.ElapsedTimeLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ElapsedTimeLabel.Location = new System.Drawing.Point(486, 12);
             this.ElapsedTimeLabel.Name = "ElapsedTimeLabel";
             this.ElapsedTimeLabel.Size = new System.Drawing.Size(0, 20);
             this.ElapsedTimeLabel.TabIndex = 3;
             // 
             // TimeLabel
             // 
-            this.TimeLabel.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
             this.TimeLabel.AutoSize = true;
-            this.TimeLabel.Font = new System.Drawing.Font("Segoe UI",
-                                                          11.25F,
-                                                          System.Drawing.FontStyle.Bold,
-                                                          System.Drawing.GraphicsUnit.Point,
-                                                          ((byte)(0)));
-            this.TimeLabel.Location = new System.Drawing.Point(885, 29);
+            this.TimeLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TimeLabel.Location = new System.Drawing.Point(440, 12);
             this.TimeLabel.Name = "TimeLabel";
             this.TimeLabel.Size = new System.Drawing.Size(48, 20);
             this.TimeLabel.TabIndex = 2;
@@ -145,17 +132,11 @@
             // 
             // ControlGroupBox
             // 
-            this.ControlGroupBox.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlGroupBox.Controls.Add(this.FilterPanel);
             this.ControlGroupBox.Controls.Add(this.QuitButton);
-            this.ControlGroupBox.Controls.Add(this.ElapsedTimeLabel);
-            this.ControlGroupBox.Controls.Add(this.FilterAgainButton);
-            this.ControlGroupBox.Controls.Add(this.TimeLabel);
-            this.ControlGroupBox.Controls.Add(this.FilterTypeCombo);
-            this.ControlGroupBox.Controls.Add(this.SortCombo);
             this.ControlGroupBox.Controls.Add(this.MaxSizeTextbox);
-            this.ControlGroupBox.Controls.Add(this.FilterButton);
             this.ControlGroupBox.Controls.Add(this.MaxSizeLabel);
             this.ControlGroupBox.Controls.Add(this.OpenImageButton);
             this.ControlGroupBox.Location = new System.Drawing.Point(17, 453);
@@ -165,32 +146,55 @@
             this.ControlGroupBox.TabStop = false;
             this.ControlGroupBox.Text = "Control Box";
             // 
-            // QuitButton
+            // FilterPanel
             // 
-            this.QuitButton.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
-            this.QuitButton.Font = new System.Drawing.Font("Segoe UI",
-                                                           11.25F,
-                                                           System.Drawing.FontStyle.Bold,
-                                                           System.Drawing.GraphicsUnit.Point,
-                                                           ((byte)(0)));
-            this.QuitButton.Location = new System.Drawing.Point(1100, 24);
-            this.QuitButton.Name = "QuitButton";
-            this.QuitButton.Size = new System.Drawing.Size(106, 31);
-            this.QuitButton.TabIndex = 9;
-            this.QuitButton.Text = "Quit";
-            this.QuitButton.UseVisualStyleBackColor = true;
-            this.QuitButton.Click += new System.EventHandler(this.OnQuitButtonClick);
+            this.FilterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.FilterPanel.Controls.Add(this.SortCombo);
+            this.FilterPanel.Controls.Add(this.FilterButton);
+            this.FilterPanel.Controls.Add(this.FilterAgainButton);
+            this.FilterPanel.Controls.Add(this.FilterTypeCombo);
+            this.FilterPanel.Controls.Add(this.TimeLabel);
+            this.FilterPanel.Controls.Add(this.ElapsedTimeLabel);
+            this.FilterPanel.Location = new System.Drawing.Point(419, 17);
+            this.FilterPanel.Name = "FilterPanel";
+            this.FilterPanel.Size = new System.Drawing.Size(588, 52);
+            this.FilterPanel.TabIndex = 1;
+            // 
+            // SortCombo
+            // 
+            this.SortCombo.FormattingEnabled = true;
+            this.SortCombo.Items.AddRange(new object[] {
+            "0) None",
+            "1) Insertion Sort",
+            "2) Selection Sort",
+            "3) Bubble Sort",
+            "4) Modified Bubble Sort",
+            "5) Merge Sort",
+            "6) Quick Sort",
+            "7) Counting Sort",
+            "8) Heap Sort",
+            "9) Radix Sort",
+            "10) Array.Sort"});
+            this.SortCombo.Location = new System.Drawing.Point(3, 0);
+            this.SortCombo.Name = "SortCombo";
+            this.SortCombo.Size = new System.Drawing.Size(179, 21);
+            this.SortCombo.TabIndex = 6;
+            // 
+            // FilterButton
+            // 
+            this.FilterButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FilterButton.Location = new System.Drawing.Point(198, 7);
+            this.FilterButton.Name = "FilterButton";
+            this.FilterButton.Size = new System.Drawing.Size(106, 31);
+            this.FilterButton.TabIndex = 1;
+            this.FilterButton.Text = "Filter";
+            this.FilterButton.UseVisualStyleBackColor = true;
+            this.FilterButton.Click += new System.EventHandler(this.OnFilterButtonClick);
             // 
             // FilterAgainButton
             // 
-            this.FilterAgainButton.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
-            this.FilterAgainButton.Font =
-                new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FilterAgainButton.Location = new System.Drawing.Point(733, 24);
+            this.FilterAgainButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FilterAgainButton.Location = new System.Drawing.Point(310, 7);
             this.FilterAgainButton.Name = "FilterAgainButton";
             this.FilterAgainButton.Size = new System.Drawing.Size(106, 31);
             this.FilterAgainButton.TabIndex = 8;
@@ -200,44 +204,27 @@
             // 
             // FilterTypeCombo
             // 
-            this.FilterTypeCombo.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
             this.FilterTypeCombo.FormattingEnabled = true;
-            this.FilterTypeCombo.Items.AddRange(new object[]
-                                                {
-                                                    "1) Alpha-trim filter",
-                                                    "2) Adaptive median filter"
-                                                });
-            this.FilterTypeCombo.Location = new System.Drawing.Point(426, 44);
+            this.FilterTypeCombo.Items.AddRange(new object[] {
+            "1) Alpha-trim filter",
+            "2) Adaptive median filter"});
+            this.FilterTypeCombo.Location = new System.Drawing.Point(3, 27);
             this.FilterTypeCombo.Name = "FilterTypeCombo";
             this.FilterTypeCombo.Size = new System.Drawing.Size(179, 21);
             this.FilterTypeCombo.TabIndex = 7;
             // 
-            // SortCombo
+            // QuitButton
             // 
-            this.SortCombo.Anchor =
-                ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                      | System.Windows.Forms.AnchorStyles.Right)));
-            this.SortCombo.FormattingEnabled = true;
-            this.SortCombo.Items.AddRange(new object[]
-                                          {
-                                              "0) None",
-                                              "1) Insertion Sort",
-                                              "2) Selection Sort",
-                                              "3) Bubble Sort",
-                                              "4) Modified Bubble Sort",
-                                              "5) Merge Sort",
-                                              "6) Quick Sort",
-                                              "7) Counting Sort",
-                                              "8) Heap Sort",
-                                              "9) Radix Sort",
-                                              "10) Array.Sort"
-                                          });
-            this.SortCombo.Location = new System.Drawing.Point(426, 17);
-            this.SortCombo.Name = "SortCombo";
-            this.SortCombo.Size = new System.Drawing.Size(179, 21);
-            this.SortCombo.TabIndex = 6;
+            this.QuitButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.QuitButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.QuitButton.Location = new System.Drawing.Point(1100, 24);
+            this.QuitButton.Name = "QuitButton";
+            this.QuitButton.Size = new System.Drawing.Size(106, 31);
+            this.QuitButton.TabIndex = 9;
+            this.QuitButton.Text = "Quit";
+            this.QuitButton.UseVisualStyleBackColor = true;
+            this.QuitButton.Click += new System.EventHandler(this.OnQuitButtonClick);
             // 
             // MaxSizeTextbox
             // 
@@ -247,19 +234,6 @@
             this.MaxSizeTextbox.Name = "MaxSizeTextbox";
             this.MaxSizeTextbox.Size = new System.Drawing.Size(83, 20);
             this.MaxSizeTextbox.TabIndex = 4;
-            // 
-            // FilterButton
-            // 
-            this.FilterButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.FilterButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FilterButton.Location = new System.Drawing.Point(621, 24);
-            this.FilterButton.Name = "FilterButton";
-            this.FilterButton.Size = new System.Drawing.Size(106, 31);
-            this.FilterButton.TabIndex = 1;
-            this.FilterButton.Text = "Filter";
-            this.FilterButton.UseVisualStyleBackColor = true;
-            this.FilterButton.Click += new System.EventHandler(this.OnFilterButtonClick);
             // 
             // MaxSizeLabel
             // 
@@ -293,6 +267,7 @@
             this.ClientSize = new System.Drawing.Size(1250, 544);
             this.Controls.Add(this.ControlGroupBox);
             this.Controls.Add(this.ViewGroupBox);
+            this.MinimumSize = new System.Drawing.Size(1266, 583);
             this.Name = "DemoForm";
             this.Text = "Image Filters";
             this.ViewGroupBox.ResumeLayout(false);
@@ -304,6 +279,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.FilteredPictureBox)).EndInit();
             this.ControlGroupBox.ResumeLayout(false);
             this.ControlGroupBox.PerformLayout();
+            this.FilterPanel.ResumeLayout(false);
+            this.FilterPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -325,6 +302,7 @@
         private System.Windows.Forms.Button FilterAgainButton;
         private System.Windows.Forms.SplitContainer ImagesSplitContainer;
         private System.Windows.Forms.Button QuitButton;
+        private System.Windows.Forms.Panel FilterPanel;
     }
 }
 
