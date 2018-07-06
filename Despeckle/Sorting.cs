@@ -1,9 +1,15 @@
 ﻿namespace IQBackOffice.Despeckle
 {
+    #region Usings
+
     using System;
+
+    #endregion
 
     public class Sorting
     {
+        #region Public Enums
+
         public enum SortType
         {
             None,
@@ -18,6 +24,8 @@
             SelectionSort,
             NativeArraySort
         }
+
+        #endregion Public Enums
 
         #region Public Methods
 
@@ -229,51 +237,50 @@
 
         public static byte[] RadixSort(byte[] array, int arrayLength)
         {
-            // Our helper array 
+            // Our helper array
             var tempArray = new byte[array.Length];
 
-            // Number of bits our group will be long 
+            // Number of bits our group will be long
             const int GROUP_BITS = 2;
 
-            // Number of bits of a C# byte 
+            // Number of bits of a C# byte
             const int BITS_PER_BYTE = 8;
 
-            // Counting and prefix arrays
-            // (note dimensions 2^r which is the number of all possible values of a r-bit number) 
+            // Counting and prefix arrays (note dimensions 2^r which is the number of all possible values of a r-bit number)
             var counts = new int[1 << GROUP_BITS];
             var prefixes = new int[1 << GROUP_BITS];
 
-            // Number of groups 
+            // Number of groups
             var numGroups = (int)Math.Ceiling(BITS_PER_BYTE / (double)GROUP_BITS);
 
-            // The mask to identify groups 
+            // The mask to identify groups
             const int GROUP_MASK = (1 << GROUP_BITS) - 1;
 
-            // The algorithm: 
+            // The algorithm:
             for (int group = 0, shift = 0; group < numGroups; group++, shift += GROUP_BITS)
             {
-                // Reset count array 
+                // Reset count array
                 for (var c = 0; c < counts.Length; c++)
                     counts[c] = 0;
 
-                // Count elements of the c-th group 
+                // Count elements of the c-th group
                 foreach (var element in array)
                     counts[(element >> shift) & GROUP_MASK]++;
 
-                // Calculate prefixes 
+                // Calculate prefixes
                 prefixes[0] = 0;
                 for (var i = 1; i < counts.Length; i++)
                     prefixes[i] = prefixes[i - 1] + counts[i - 1];
 
-                // From array[] to tempArray[] elements ordered by c-th group 
+                // From array[] to tempArray[] elements ordered by c-th group
                 foreach (var element in array)
                     tempArray[prefixes[(element >> shift) & GROUP_MASK]++] = element;
 
-                // array[] = tempArray[] and start again until the last group 
+                // array[] = tempArray[] and start again until the last group
                 tempArray.CopyTo(array, 0);
             }
 
-            // Array is sorted 
+            // Array is sorted
             return array;
         }
 

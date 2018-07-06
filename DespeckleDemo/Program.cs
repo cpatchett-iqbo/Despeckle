@@ -1,19 +1,27 @@
 ﻿namespace IQBackOffice.Despeckle.Demo
 {
+    #region Usings
+
     using System;
     using System.Windows.Forms;
 
-    static class Program
+    #endregion
+
+    internal static class Program
     {
+        #region Private Methods
+
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new DemoForm());
         }
+
+        #endregion Private Methods
     }
 }
