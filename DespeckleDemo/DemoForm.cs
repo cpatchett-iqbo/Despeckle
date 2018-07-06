@@ -1,6 +1,8 @@
 ﻿namespace IQBackOffice.Despeckle.Demo
 {
     using System;
+    using System.Drawing;
+    using System.Drawing.Imaging;
     using System.Globalization;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -37,7 +39,7 @@
             //Open the browsed image and display it
             _openedFilePath = openFileDialog.FileName;
             _imageMatrix = ImageOperations.OpenImage(_openedFilePath);
-            ImageOperations.DisplayImage(_imageMatrix, OriginalPictureBox);
+            DisplayImage(_imageMatrix, OriginalPictureBox);
 
             FilterButton.Enabled = true;
         }
@@ -101,7 +103,7 @@
                                 ImageOperations.DespeckleImage(imageMatrix, maxSize, sort, filter);
 
                                 var end = Environment.TickCount;
-                                ImageOperations.DisplayImage(imageMatrix, FilteredPictureBox);
+                                DisplayImage(imageMatrix, FilteredPictureBox);
                                 double time = end - start;
                                 time /= 1000;
                                 return time;
@@ -112,5 +114,54 @@
         {
             Close();
         }
+
+        /// <summary>
+        ///     Display the given image on the given PictureBox object
+        /// </summary>
+        /// <param name="imageMatrix">
+        ///     2D array that contains the image
+        /// </param>
+        /// <param name="pictureBox">
+        ///     PictureBox object to display the image on it
+        /// </param>
+        public static void DisplayImage(byte[,] imageMatrix, PictureBox pictureBox)
+        {
+            // Create Image:
+            var height = ImageOperations.GetMatrixHeight(imageMatrix);
+            var width = ImageOperations.GetMatrixWidth(imageMatrix);
+
+            var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+
+            unsafe
+            {
+                var bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                var imageWidth = width * 3;
+                var strideOffset = bitmapData.Stride - imageWidth;
+                var pixelPtr = (byte*)bitmapData.Scan0;
+                if (pixelPtr == null)
+                    return;
+
+                for (var y = 0; y < height; y++)
+                {
+                    for (var x = 0; x < width; x++)
+                    {
+                        pixelPtr[0] = pixelPtr[1] = pixelPtr[2] = imageMatrix[y, x];
+                        pixelPtr += 3;
+                    }
+
+                    pixelPtr += strideOffset;
+                }
+
+                bitmap.UnlockBits(bitmapData);
+            }
+
+            var zoomFactor = 1.0;
+            var newSize = new Size((int)(bitmap.Width * zoomFactor), (int)(bitmap.Height * zoomFactor));
+            var bmp = new Bitmap(bitmap, newSize);
+            pictureBox.Image = bmp;
+            pictureBox.SizeMode = PictureBoxSizeMode.Normal;
+        }
+
+
     }
 }

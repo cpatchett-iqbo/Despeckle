@@ -4,6 +4,20 @@
 
     public class Sorting
     {
+        public enum SortType
+        {
+            None,
+            BubbleSort,
+            CountingSort,
+            HeapSort,
+            InsertionSort,
+            MergeSort,
+            ModifiedBubbleSort,
+            QuickSort,
+            RadixSort,
+            SelectionSort,
+            NativeArraySort
+        }
         #region Public Methods
 
         public static byte[] BubbleSort(byte[] array, int arrayLength)

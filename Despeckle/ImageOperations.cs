@@ -5,7 +5,6 @@
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
-    using System.Windows.Forms;
 
     #endregion
 
@@ -114,78 +113,31 @@
         }
 
         /// <summary>
-        ///     Get the height of the image
+        ///     Get the height of a 2D matrix
         /// </summary>
-        /// <param name="imageMatrix">
-        ///     2D array that contains the image
+        /// <param name="matrix">
+        ///     2D array that contains the matrix
         /// </param>
         /// <returns>
-        ///     Image Height
+        ///     Matrix height
         /// </returns>
-        public static int GetHeight(byte[,] imageMatrix)
+        public static int GetMatrixHeight(byte[,] matrix)
         {
-            return imageMatrix.GetLength(0);
+            return matrix.GetLength(0);
         }
 
         /// <summary>
-        ///     Get the width of the image
+        ///     Get the width of a 2D matrix
         /// </summary>
-        /// <param name="imageMatrix">
-        ///     2D array that contains the image
+        /// <param name="matrix">
+        ///     2D array that contains the matrix
         /// </param>
         /// <returns>
-        ///     Image Width
+        ///     Matrix width
         /// </returns>
-        public static int GetWidth(byte[,] imageMatrix)
+        public static int GetMatrixWidth(byte[,] matrix)
         {
-            return imageMatrix.GetLength(1);
-        }
-
-        /// <summary>
-        ///     Display the given image on the given PictureBox object
-        /// </summary>
-        /// <param name="imageMatrix">
-        ///     2D array that contains the image
-        /// </param>
-        /// <param name="pictureBox">
-        ///     PictureBox object to display the image on it
-        /// </param>
-        public static void DisplayImage(byte[,] imageMatrix, PictureBox pictureBox)
-        {
-            // Create Image:
-            var height = GetHeight(imageMatrix);
-            var width = GetWidth(imageMatrix);
-
-            var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-
-            unsafe
-            {
-                var bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-                var imageWidth = width * 3;
-                var strideOffset = bitmapData.Stride - imageWidth;
-                var pixelPtr = (byte*)bitmapData.Scan0;
-                if (pixelPtr == null)
-                    return;
-
-                for (var y = 0; y < height; y++)
-                {
-                    for (var x = 0; x < width; x++)
-                    {
-                        pixelPtr[0] = pixelPtr[1] = pixelPtr[2] = imageMatrix[y, x];
-                        pixelPtr += 3;
-                    }
-
-                    pixelPtr += strideOffset;
-                }
-
-                bitmap.UnlockBits(bitmapData);
-            }
-
-            var zoomFactor = 1.0;
-            var newSize = new Size((int)(bitmap.Width * zoomFactor), (int)(bitmap.Height * zoomFactor));
-            var bmp = new Bitmap(bitmap, newSize);
-            pictureBox.Image = bmp;
-            pictureBox.SizeMode = PictureBoxSizeMode.Normal;
+            return matrix.GetLength(1);
         }
 
         public static byte AlphaTrimFilter(byte[,] imageMatrix, int x, int y, int maxSize, int sort)
@@ -220,8 +172,8 @@
             byte max = 0;
             byte min = 255;
             var arrayLength = 0;
-            var imageWidth = GetWidth(imageMatrix);
-            var imageHeight = GetHeight(imageMatrix);
+            var imageWidth = GetMatrixWidth(imageMatrix);
+            var imageHeight = GetMatrixHeight(imageMatrix);
             for (var i = 0; i < maxSize * maxSize; i++)
             {
                 var newY = y + dy[i];
@@ -271,8 +223,8 @@
                 byte minValue = 255;
                 var arrayLength = 0;
                 var currentValue = imageMatrix[y, x];
-                var imageHeight = GetHeight(imageMatrix);
-                var imageWidth = GetWidth(imageMatrix);
+                var imageHeight = GetMatrixHeight(imageMatrix);
+                var imageWidth = GetMatrixWidth(imageMatrix);
                 for (var i = 0; i < windowArraySize; i++)
                 {
                     var newY = y + dy[i];
@@ -293,19 +245,19 @@
                 switch (sortType)
                 {
                     case 1:
-                        array = Sorting.InsertionSort(array, arrayLength);
-                        break;
-
-                    case 2:
-                        array = Sorting.SelectionSort(array, arrayLength);
-                        break;
-
-                    case 3:
                         array = Sorting.BubbleSort(array, arrayLength);
                         break;
 
+                    case 2:
+                        array = Sorting.CountingSort(array, arrayLength, maxValue, minValue);
+                        break;
+
+                    case 3:
+                        array = Sorting.HeapSort(array, arrayLength);
+                        break;
+
                     case 4:
-                        array = Sorting.ModifiedBubbleSort(array, arrayLength);
+                        array = Sorting.InsertionSort(array, arrayLength);
                         break;
 
                     case 5:
@@ -313,19 +265,19 @@
                         break;
 
                     case 6:
-                        array = Sorting.QuickSort(array, 0, arrayLength - 1);
+                        array = Sorting.ModifiedBubbleSort(array, arrayLength);
                         break;
 
                     case 7:
-                        array = Sorting.CountingSort(array, arrayLength, maxValue, minValue);
+                        array = Sorting.QuickSort(array, 0, arrayLength - 1);
                         break;
 
                     case 8:
-                        array = Sorting.HeapSort(array, arrayLength);
+                        array = Sorting.RadixSort(array, arrayLength);
                         break;
 
                     case 9:
-                        array = Sorting.RadixSort(array, arrayLength);
+                        array = Sorting.SelectionSort(array, arrayLength);
                         break;
 
                     case 10:
@@ -367,8 +319,8 @@
         public static byte[,] DespeckleImage(byte[,] imageMatrix, int maxSize = 5, int sort = 10, int filter = 2)
         {
             var imageMatrix2 = imageMatrix;
-            var imageHeight = GetHeight(imageMatrix);
-            var imageWidth = GetWidth(imageMatrix);
+            var imageHeight = GetMatrixHeight(imageMatrix);
+            var imageWidth = GetMatrixWidth(imageMatrix);
             for (var y = 0; y < imageHeight; y++)
             {
                 for (var x = 0; x < imageWidth; x++)

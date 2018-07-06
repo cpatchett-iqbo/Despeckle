@@ -165,15 +165,15 @@
             this.SortCombo.FormattingEnabled = true;
             this.SortCombo.Items.AddRange(new object[] {
             "0) None",
-            "1) Insertion Sort",
-            "2) Selection Sort",
-            "3) Bubble Sort",
-            "4) Modified Bubble Sort",
+            "1) Bubble Sort",
+            "2) Counting Sort",
+            "3) Heap Sort",
+            "4) Insertion Sort",
             "5) Merge Sort",
-            "6) Quick Sort",
-            "7) Counting Sort",
-            "8) Heap Sort",
-            "9) Radix Sort",
+            "6) Modified Bubble Sort",
+            "7) Quick Sort",
+            "8) Radix Sort",
+            "9) Selection Sort",
             "10) Array.Sort"});
             this.SortCombo.Location = new System.Drawing.Point(3, 0);
             this.SortCombo.Name = "SortCombo";
@@ -269,6 +269,7 @@
             this.Controls.Add(this.ViewGroupBox);
             this.MinimumSize = new System.Drawing.Size(1266, 583);
             this.Name = "DemoForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Image Filters";
             this.ViewGroupBox.ResumeLayout(false);
             this.ImagesSplitContainer.Panel1.ResumeLayout(false);
