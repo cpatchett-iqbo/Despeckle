@@ -18,6 +18,7 @@
             SelectionSort,
             NativeArraySort
         }
+
         #region Public Methods
 
         public static byte[] BubbleSort(byte[] array, int arrayLength)

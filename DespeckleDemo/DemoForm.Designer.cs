@@ -163,18 +163,20 @@
             // SortCombo
             // 
             this.SortCombo.FormattingEnabled = true;
-            this.SortCombo.Items.AddRange(new object[] {
-            "0) None",
-            "1) Bubble Sort",
-            "2) Counting Sort",
-            "3) Heap Sort",
-            "4) Insertion Sort",
-            "5) Merge Sort",
-            "6) Modified Bubble Sort",
-            "7) Quick Sort",
-            "8) Radix Sort",
-            "9) Selection Sort",
-            "10) Array.Sort"});
+            this.SortCombo.Items.AddRange(new object[]
+                                          {
+                                              "0) None",
+                                              "1) Bubble Sort",
+                                              "2) Counting Sort",
+                                              "3) Heap Sort",
+                                              "4) Insertion Sort",
+                                              "5) Merge Sort",
+                                              "6) Modified Bubble Sort",
+                                              "7) Quick Sort",
+                                              "8) Radix Sort",
+                                              "9) Selection Sort",
+                                              "10) Array.Sort"
+                                          });
             this.SortCombo.Location = new System.Drawing.Point(3, 0);
             this.SortCombo.Name = "SortCombo";
             this.SortCombo.Size = new System.Drawing.Size(179, 21);
@@ -205,9 +207,11 @@
             // FilterTypeCombo
             // 
             this.FilterTypeCombo.FormattingEnabled = true;
-            this.FilterTypeCombo.Items.AddRange(new object[] {
-            "1) Alpha-trim filter",
-            "2) Adaptive median filter"});
+            this.FilterTypeCombo.Items.AddRange(new object[]
+                                                {
+                                                    "1) Alpha-trim filter",
+                                                    "2) Adaptive median filter"
+                                                });
             this.FilterTypeCombo.Location = new System.Drawing.Point(3, 27);
             this.FilterTypeCombo.Name = "FilterTypeCombo";
             this.FilterTypeCombo.Size = new System.Drawing.Size(179, 21);

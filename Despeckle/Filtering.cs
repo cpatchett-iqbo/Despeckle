@@ -8,8 +8,15 @@
 
     #endregion
 
-    public class ImageOperations
+    public class Filtering
     {
+        public enum FilterType
+        {
+            None,
+            AlphaTrim,
+            AdaptiveMedian
+        }
+
         /// <summary>
         ///     Open an image, convert it to gray scale and load it into 2D array of size (Height x Width)
         /// </summary>
@@ -140,7 +147,7 @@
             return matrix.GetLength(1);
         }
 
-        public static byte AlphaTrimFilter(byte[,] imageMatrix, int x, int y, int maxSize, int sort)
+        public static byte AlphaTrimFilter(byte[,] imageMatrix, int x, int y, int maxSize, Sorting.SortType sortType)
         {
             byte[] array;
             int[] dx, dy;
@@ -199,7 +206,7 @@
             return (byte)avg;
         }
 
-        public static byte AdaptiveMedianFilter(byte[,] imageMatrix, int x, int y, int windowSize = 3, int maxWindowSize = 5, int sortType = 10)
+        public static byte AdaptiveMedianFilter(byte[,] imageMatrix, int x, int y, int windowSize = 3, int maxWindowSize = 5, Sorting.SortType sortType = Sorting.SortType.NativeArraySort)
         {
             while (true)
             {
@@ -244,43 +251,43 @@
 
                 switch (sortType)
                 {
-                    case 1:
+                    case Sorting.SortType.BubbleSort:
                         array = Sorting.BubbleSort(array, arrayLength);
                         break;
 
-                    case 2:
+                    case Sorting.SortType.CountingSort:
                         array = Sorting.CountingSort(array, arrayLength, maxValue, minValue);
                         break;
 
-                    case 3:
+                    case Sorting.SortType.HeapSort:
                         array = Sorting.HeapSort(array, arrayLength);
                         break;
 
-                    case 4:
+                    case Sorting.SortType.InsertionSort:
                         array = Sorting.InsertionSort(array, arrayLength);
                         break;
 
-                    case 5:
+                    case Sorting.SortType.MergeSort:
                         array = Sorting.MergeSort(array, 0, arrayLength - 1);
                         break;
 
-                    case 6:
+                    case Sorting.SortType.ModifiedBubbleSort:
                         array = Sorting.ModifiedBubbleSort(array, arrayLength);
                         break;
 
-                    case 7:
+                    case Sorting.SortType.QuickSort:
                         array = Sorting.QuickSort(array, 0, arrayLength - 1);
                         break;
 
-                    case 8:
+                    case Sorting.SortType.RadixSort:
                         array = Sorting.RadixSort(array, arrayLength);
                         break;
 
-                    case 9:
+                    case Sorting.SortType.SelectionSort:
                         array = Sorting.SelectionSort(array, arrayLength);
                         break;
 
-                    case 10:
+                    case Sorting.SortType.NativeArraySort:
                         var sortArray = new byte[arrayLength];
                         if (arrayLength != array.Length)
                             Array.Copy(array, sortArray, arrayLength);
@@ -316,7 +323,7 @@
             return imageMatrix;
         }
 
-        public static byte[,] DespeckleImage(byte[,] imageMatrix, int maxSize = 5, int sort = 10, int filter = 2)
+        public static byte[,] DespeckleImage(byte[,] imageMatrix, int maxSize = 5, Sorting.SortType sortType = Sorting.SortType.NativeArraySort, FilterType filterType = FilterType.AdaptiveMedian)
         {
             var imageMatrix2 = imageMatrix;
             var imageHeight = GetMatrixHeight(imageMatrix);
@@ -325,10 +332,10 @@
             {
                 for (var x = 0; x < imageWidth; x++)
                 {
-                    if (filter == 1)
-                        imageMatrix2[y, x] = AlphaTrimFilter(imageMatrix, x, y, maxSize, sort);
+                    if (filterType == FilterType.AlphaTrim)
+                        imageMatrix2[y, x] = AlphaTrimFilter(imageMatrix, x, y, maxSize, sortType);
                     else
-                        imageMatrix2[y, x] = AdaptiveMedianFilter(imageMatrix, x, y, 3, maxSize, sort);
+                        imageMatrix2[y, x] = AdaptiveMedianFilter(imageMatrix, x, y, 3, maxSize, sortType);
                 }
             }
 

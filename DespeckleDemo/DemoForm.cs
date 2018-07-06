@@ -38,7 +38,7 @@
 
             //Open the browsed image and display it
             _openedFilePath = openFileDialog.FileName;
-            _imageMatrix = ImageOperations.OpenImage(_openedFilePath);
+            _imageMatrix = Filtering.OpenImage(_openedFilePath);
             DisplayImage(_imageMatrix, OriginalPictureBox);
 
             FilterButton.Enabled = true;
@@ -62,19 +62,16 @@
 
         private async Task FilterImageAsync()
         {
-            var sort = SortCombo.SelectedIndex;
-            if (sort == -1)
-            {
-                SortCombo.SelectedIndex = 10;
-                sort = 10;
-            }
+            if (SortCombo.SelectedIndex == -1)
+                SortCombo.SelectedIndex = (int)Sorting.SortType.NativeArraySort;
 
-            var filter = FilterTypeCombo.SelectedIndex;
-            if (filter == -1)
-            {
-                FilterTypeCombo.SelectedIndex = 1;
-                filter = 2;
-            }
+            var sortType = (Sorting.SortType)SortCombo.SelectedIndex;
+
+            if (FilterTypeCombo.SelectedIndex == -1)
+                FilterTypeCombo.SelectedIndex = (int)Filtering.FilterType.AdaptiveMedian;
+
+
+            var filterType = (Filtering.FilterType)(FilterTypeCombo.SelectedIndex + 1);
 
             if (!int.TryParse(MaxSizeTextbox.Text, out var maxSize))
             {
@@ -86,7 +83,7 @@
             FilterAgainButton.Enabled = false;
 
             ElapsedTimeLabel.Text = string.Empty;
-            var result = await FilterImage(_imageMatrix, sort, filter, maxSize);
+            var result = await FilterImage(_imageMatrix, sortType, filterType, maxSize);
             ElapsedTimeLabel.Text = result.ToString(CultureInfo.InvariantCulture);
             ElapsedTimeLabel.Text += @" s";
 
@@ -94,14 +91,12 @@
             FilterAgainButton.Enabled = true;
         }
 
-        private Task<double> FilterImage(byte[,] imageMatrix, int sort, int filter, int maxSize)
+        private Task<double> FilterImage(byte[,] imageMatrix, Sorting.SortType sortType, Filtering.FilterType filterType, int maxSize)
         {
             return Task.Run(() =>
                             {
                                 var start = Environment.TickCount;
-
-                                ImageOperations.DespeckleImage(imageMatrix, maxSize, sort, filter);
-
+                                Filtering.DespeckleImage(imageMatrix, maxSize, sortType, filterType);
                                 var end = Environment.TickCount;
                                 DisplayImage(imageMatrix, FilteredPictureBox);
                                 double time = end - start;
@@ -127,8 +122,8 @@
         public static void DisplayImage(byte[,] imageMatrix, PictureBox pictureBox)
         {
             // Create Image:
-            var height = ImageOperations.GetMatrixHeight(imageMatrix);
-            var width = ImageOperations.GetMatrixWidth(imageMatrix);
+            var height = Filtering.GetMatrixHeight(imageMatrix);
+            var width = Filtering.GetMatrixWidth(imageMatrix);
 
             var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
