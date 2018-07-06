@@ -5,6 +5,7 @@
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.Linq;
     using System.Windows.Forms;
 
     #endregion
@@ -247,32 +248,33 @@
             return (byte)avg;
         }
 
-        public static byte AdaptiveMedianFilter(byte[,] imageMatrix, int x, int y, int w, int maxWidth, int sort)
+        public static byte AdaptiveMedianFilter(byte[,] imageMatrix, int x, int y, int windowSize = 3, int maxWindowSize = 5, int sortType = 10)
         {
             while (true)
             {
-                var array = new byte[w * w];
-                var dx = new int[w * w];
-                var dy = new int[w * w];
+                var windowArraySize = windowSize * windowSize;
+                var array = new byte[windowArraySize];
+                var dx = new int[windowArraySize];
+                var dy = new int[windowArraySize];
+                var halfWindowSize = windowSize / 2;
                 var index = 0;
-                var wHalf = w / 2;
-                for (var yShift = -wHalf; yShift <= wHalf; yShift++)
+                for (var fromCenterY = -halfWindowSize; fromCenterY <= halfWindowSize; fromCenterY++)
                 {
-                    for (var xShift = -wHalf; xShift <= wHalf; xShift++)
+                    for (var fromCenterX = -halfWindowSize; fromCenterX <= halfWindowSize; fromCenterX++)
                     {
-                        dx[index] = xShift;
-                        dy[index] = yShift;
+                        dx[index] = fromCenterX;
+                        dy[index] = fromCenterY;
                         index++;
                     }
                 }
 
-                byte max = 0;
-                byte min = 255;
+                byte maxValue = 0;
+                byte minValue = 255;
                 var arrayLength = 0;
-                var z = imageMatrix[y, x];
+                var currentValue = imageMatrix[y, x];
                 var imageHeight = GetHeight(imageMatrix);
                 var imageWidth = GetWidth(imageMatrix);
-                for (var i = 0; i < w * w; i++)
+                for (var i = 0; i < windowArraySize; i++)
                 {
                     var newY = y + dy[i];
                     var newX = x + dx[i];
@@ -280,16 +282,16 @@
                         continue;
 
                     array[arrayLength] = imageMatrix[newY, newX];
-                    if (array[arrayLength] > max)
-                        max = array[arrayLength];
+                    if (array[arrayLength] > maxValue)
+                        maxValue = array[arrayLength];
 
-                    if (array[arrayLength] < min)
-                        min = array[arrayLength];
+                    if (array[arrayLength] < minValue)
+                        minValue = array[arrayLength];
 
                     arrayLength++;
                 }
 
-                switch (sort)
+                switch (sortType)
                 {
                     case 1:
                         array = Sorting.InsertionSort(array, arrayLength);
@@ -316,7 +318,7 @@
                         break;
 
                     case 7:
-                        array = Sorting.CountingSort(array, arrayLength, max, min);
+                        array = Sorting.CountingSort(array, arrayLength, maxValue, minValue);
                         break;
 
                     case 8:
@@ -328,30 +330,42 @@
                         break;
 
                     case 10:
-                        Array.Sort(array);
+                        var sortArray = new byte[arrayLength];
+                        if (arrayLength != array.Length)
+                            Array.Copy(array, sortArray, arrayLength);
+                        else
+                            sortArray = array;
+                        Array.Sort(sortArray);
                         break;
                 }
 
-                min = array[0];
-                var med = array[arrayLength / 2];
-                var a1 = med - min;
-                var a2 = max - med;
-                if (a1 <= 0 || a2 <= 0)
-                    return med;
+                minValue = array[0];
+                var medianValue = array[arrayLength / 2];
+                var medianDistanceFromMin = medianValue - minValue;
+                var medianDistanceFromMax = maxValue - medianValue;
+                if (medianDistanceFromMin <= 0 || medianDistanceFromMax <= 0)
+                    return medianValue;
 
-                var b1 = z - min;
-                var b2 = max - z;
-                if (b1 > 0 && b2 > 0)
-                    return z;
+                var currentDistanceFromMin = currentValue - minValue;
+                var currentDistanceFromMax = maxValue - currentValue;
+                if (currentDistanceFromMin > 0 && currentDistanceFromMax > 0)
+                    return currentValue;
 
-                if (w + 2 >= maxWidth)
-                    return med;
+                if (windowSize + 2 >= maxWindowSize)
+                    return medianValue;
 
-                w = w + 2;
+                windowSize = windowSize + 2;
             }
         }
 
-        public static byte[,] ImageFilter(byte[,] imageMatrix, int maxSize, int sort, int filter)
+        public static byte[,] DespeckleImage(string imagePath)
+        {
+            var imageMatrix = OpenImage(imagePath);
+            DespeckleImage(imageMatrix);
+            return imageMatrix;
+        }
+
+        public static byte[,] DespeckleImage(byte[,] imageMatrix, int maxSize = 5, int sort = 10, int filter = 2)
         {
             var imageMatrix2 = imageMatrix;
             var imageHeight = GetHeight(imageMatrix);

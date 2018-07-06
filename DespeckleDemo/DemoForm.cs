@@ -54,7 +54,7 @@
 
             var start = Environment.TickCount;
 
-            ImageOperations.ImageFilter(imageMatrix, maxSize, sort, filter);
+            ImageOperations.DespeckleImage(imageMatrix, maxSize, sort, filter);
 
             var end = Environment.TickCount;
             ImageOperations.DisplayImage(imageMatrix, FilteredPictureBox);
