@@ -6,6 +6,8 @@
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Globalization;
+    using System.IO;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using System.Windows.Forms;
 
@@ -46,39 +48,8 @@
         /// </param>
         public static void DisplayImage(byte[,] imageMatrix, PictureBox pictureBox)
         {
-            // Create Image:
-            var height = Filtering.GetMatrixHeight(imageMatrix);
-            var width = Filtering.GetMatrixWidth(imageMatrix);
-
-            var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-
-            unsafe
-            {
-                var bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-                var imageWidth = width * 3;
-                var strideOffset = bitmapData.Stride - imageWidth;
-                var pixelPtr = (byte*)bitmapData.Scan0;
-                if (pixelPtr == null)
-                    return;
-
-                for (var y = 0; y < height; y++)
-                {
-                    for (var x = 0; x < width; x++)
-                    {
-                        pixelPtr[0] = pixelPtr[1] = pixelPtr[2] = imageMatrix[y, x];
-                        pixelPtr += 3;
-                    }
-
-                    pixelPtr += strideOffset;
-                }
-
-                bitmap.UnlockBits(bitmapData);
-            }
-
-            var zoomFactor = 1.0;
-            var newSize = new Size((int)(bitmap.Width * zoomFactor), (int)(bitmap.Height * zoomFactor));
-            var bmp = new Bitmap(bitmap, newSize);
-            pictureBox.Image = bmp;
+            var bitmap = Filtering.MatrixToImage(imageMatrix, PixelFormat.Format24bppRgb);
+            pictureBox.Image = bitmap;
             pictureBox.SizeMode = PictureBoxSizeMode.Normal;
         }
 
@@ -164,7 +135,8 @@
 
             //Open the browsed image and display it
             _openedFilePath = openFileDialog.FileName;
-            _imageMatrix = Filtering.OpenImage(_openedFilePath);
+            var originalImage = new Bitmap(_openedFilePath);
+            _imageMatrix = Filtering.ImageToMatrix(originalImage);
             DisplayImage(_imageMatrix, OriginalPictureBox);
 
             FilterButton.Enabled = true;

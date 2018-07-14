@@ -197,11 +197,11 @@
             return (byte)avg;
         }
 
-        public static byte[,] DespeckleImage(string imagePath)
+        public static Bitmap DespeckleImage(Bitmap image)
         {
-            var imageMatrix = OpenImage(imagePath);
-            DespeckleImage(imageMatrix);
-            return imageMatrix;
+            var imageMatrix = ImageToMatrix(image);
+            var cleanMatrix = DespeckleImage(imageMatrix);
+            return MatrixToImage(cleanMatrix, PixelFormat.Format24bppRgb);
         }
 
         public static byte[,] DespeckleImage(byte[,] imageMatrix,
@@ -257,30 +257,29 @@
         /// <summary>
         ///     Open an image, convert it to gray scale and load it into 2D array of size (Height x Width)
         /// </summary>
-        /// <param name="imagePath">
+        /// <param name="image">
         ///     Image file path
         /// </param>
         /// <returns>
         ///     2D array of gray values
         /// </returns>
-        public static byte[,] OpenImage(string imagePath)
+        public static byte[,] ImageToMatrix(Bitmap image)
         {
-            var originalImage = new Bitmap(imagePath);
-            var height = originalImage.Height;
-            var width = originalImage.Width;
+            var height = image.Height;
+            var width = image.Width;
 
             var buffer = new byte[height, width];
 
             unsafe
             {
-                var bitmapData = originalImage.LockBits(new Rectangle(0, 0, width, height),
+                var bitmapData = image.LockBits(new Rectangle(0, 0, width, height),
                                                         ImageLockMode.ReadWrite,
-                                                        originalImage.PixelFormat);
+                                                        image.PixelFormat);
                 int x, y;
                 int byteWidth;
                 int bitsPerPixel;
 
-                switch (originalImage.PixelFormat)
+                switch (image.PixelFormat)
                 {
                     case PixelFormat.Format24bppRgb:
 
@@ -350,10 +349,53 @@
                     pixelPtr += strideOffset;
                 }
 
-                originalImage.UnlockBits(bitmapData);
+                image.UnlockBits(bitmapData);
             }
 
             return buffer;
+        }
+
+        /// <summary>
+        ///     Display the given image on the given PictureBox object
+        /// </summary>
+        /// <param name="imageMatrix">
+        ///     2D array that contains the image
+        /// </param>
+        /// <param name="pixelFormat">
+        ///     Pixel format that image matrix is in
+        /// </param>
+        public static Bitmap MatrixToImage(byte[,] imageMatrix, PixelFormat pixelFormat)
+        {
+            // Create Image:
+            var height = GetMatrixHeight(imageMatrix);
+            var width = GetMatrixWidth(imageMatrix);
+
+            var bitmap = new Bitmap(width, height, pixelFormat);
+
+            unsafe
+            {
+                var bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                var imageWidth = width * 3;
+                var strideOffset = bitmapData.Stride - imageWidth;
+                var pixelPtr = (byte*)bitmapData.Scan0;
+                if (pixelPtr == null)
+                    return null;
+
+                for (var y = 0; y < height; y++)
+                {
+                    for (var x = 0; x < width; x++)
+                    {
+                        pixelPtr[0] = pixelPtr[1] = pixelPtr[2] = imageMatrix[y, x];
+                        pixelPtr += 3;
+                    }
+
+                    pixelPtr += strideOffset;
+                }
+
+                bitmap.UnlockBits(bitmapData);
+            }
+
+            return bitmap;
         }
 
         #endregion Public Methods
